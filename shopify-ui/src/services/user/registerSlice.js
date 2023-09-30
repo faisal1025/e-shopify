@@ -1,0 +1,43 @@
+
+
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import axios from 'axios'
+
+const baseurl = "http://127.0.0.1:8001/api/user"
+
+export const registerUser = createAsyncThunk('registerUser', async (data) => {
+    const response = await axios.post(`${baseurl}/register/`, data)
+    localStorage.setItem('token', response.data.token)
+    return response.data
+}) 
+
+export const registerSlice = createSlice({
+    name: 'register',
+    initialState: {
+        msg: '',
+        token: '',
+        isLoading: false,
+        isError: false
+    },
+    reducers: {
+
+    },
+    extraReducers: (builder) => {
+        builder.addCase(registerUser.pending, (state, action) => {
+            state.isLoading = true
+        })
+        builder.addCase(registerUser.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.msg = action.payload.msg
+            state.token = action.payload.token
+        })
+        builder.addCase(registerUser.rejected, (state, action) => {
+            console.log('Error', action.payload);
+            state.isLoading = false
+            state.isError = true
+        })
+    }
+})
+
+export default registerSlice.reducer
+
