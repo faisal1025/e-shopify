@@ -2,6 +2,8 @@ const express = require('express')
 const cors = require('cors')
 const connectToMongoDb = require('./connextion')
 const userRoute = require('./routers/users')
+const productRoute = require('./routers/products')
+const categoryRoute = require('./routers/categories')
 
 
 const app = express()
@@ -18,6 +20,7 @@ app.use(cors({
 }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use("/uploads", express.static(__dirname + '/uploads'))
 
 // api-routes
 app.get('/', (req, res) => {
@@ -29,6 +32,8 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/user', userRoute)
+app.use('/api/product', productRoute)
+app.use('/api/category', categoryRoute)
 
-
+global.__basedir = __dirname;
 app.listen(PORT, ()=>{console.log(`Server is running on ${PORT} port`);})

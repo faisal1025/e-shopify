@@ -75,7 +75,6 @@ const LoginForm = () => {
         const isValid = validateForm();
 
         if(!isValid){
-            console.log(loginFrom.email, loginFrom.password);
             dispatch(loginUser(loginFrom)).then(() => {
                 dispatch(updateAuth())
                 navigate('/');

@@ -5,6 +5,7 @@ import verifyEmailReducer from './user/verifyEmail'
 import verifyOtpReducer from './user/verifyOtp'
 import userReducer from './user/authSlice'
 import loginReducer from './user/loginSlice'
+import {getHomeProductReducer, getProductByCategoryReducer, getProductByIdReducer} from './product/productSlice'
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,9 @@ export const store = configureStore({
     verifyEmail: verifyEmailReducer,
     verifyOtp: verifyOtpReducer,
     user: userReducer,
-    login: loginReducer
+    login: loginReducer,
+    home: getHomeProductReducer,
+    categoryProduct: getProductByCategoryReducer,
+    idProduct: getProductByIdReducer
   },
 })

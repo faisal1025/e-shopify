@@ -1,0 +1,28 @@
+const { getToken } = require('../services/auth')
+
+const isAutheticated = async (req, res, next) => {
+    let token = req.headers.authorization;
+    if(!token) return res.json({
+        status: false,
+        msg: "User is not authorized"
+    })
+    token = token.slice(7);
+   
+    const response = await getToken(token);
+    if(response.status){
+        req.user = response.decoded;
+        next();
+    }else{
+        return res.json({
+            status: false,
+            msg: response.err.message
+        })
+    }
+
+    
+}
+
+
+module.exports = {
+    isAutheticated
+}

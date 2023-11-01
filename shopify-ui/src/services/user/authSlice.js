@@ -17,7 +17,7 @@ const userSlice = createSlice({
             state.user = token ? jwt_decode(token) : {}
         },
         logoutUser: (state, action) => {
-            localStorage.clear('token')
+            localStorage.removeItem('token')
             state.isAuthenticated = false
             state.user = {}
         }

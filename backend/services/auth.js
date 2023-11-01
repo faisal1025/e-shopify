@@ -15,7 +15,10 @@ const setToken = async (user) => {
 }
 
 const getToken = async (token) => {
-    return jwt.verify(token, secret)
+    return jwt.verify(token, secret, (err, decoded)=>{
+        if(err) return {status: false, err: err};
+        else return {status: true, decoded: decoded};
+    })
 }
 
 module.exports = {

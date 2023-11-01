@@ -1,15 +1,24 @@
 import { logoutUser } from '../services/user/authSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import { Avatar, Button, IconButton, OutlinedInput, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SearchIcon from '@mui/icons-material/Search';
+import { addCartItem, getLocalCartItem } from '../services/product/cartSlice';
 
 const Header = () => {
   const dispatch = useDispatch()
   const {isAuthenticated, user} = useSelector(store => store.user)
-  const totalCartItem = useSelector((store)=>store.cart.total)
+  const cart = useSelector((store)=>store.cart)
+
+  useEffect(()=>{
+    if(isAuthenticated){
+      dispatch(addCartItem(null));
+    }else{
+      dispatch(getLocalCartItem());
+    }
+  }, [isAuthenticated])
 
   return (
     <>
@@ -58,7 +67,7 @@ const Header = () => {
             <li className='hover:bg-slate-400 rounded-full'>
               <Link to={'/user/cart'}>
                   <IconButton variant='outlined' color='black' className='flex flex-col justify-center relative'>
-                    <Typography variant='body2' component={'span'} className='rounded-full self-end absolute bg-orange-300 w-4 h-4 top-0 right-0 text-xs'>{totalCartItem}</Typography>
+                    <Typography variant='body2' component={'span'} className='rounded-full self-end absolute bg-orange-300 w-4 h-4 top-0 right-0 text-xs'>{cart.total}</Typography>
                     <ShoppingCartIcon />
                   </IconButton> 
               </Link>

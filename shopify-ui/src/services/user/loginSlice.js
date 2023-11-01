@@ -6,8 +6,10 @@ import axios from 'axios'
 const baseurl = "http://127.0.0.1:8001/api/user"
 
 export const loginUser = createAsyncThunk('loginUser', async (data) => {
+    console.log(data);
     const response = await axios.post(`${baseurl}/login/`, data)
     localStorage.setItem('token', response.data.token)
+    console.log(response.data);
     return response.data
 }) 
 

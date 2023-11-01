@@ -22,6 +22,10 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         require: true
     },
+    cartNumber: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'cart'
+    }
 },
 {timestapms: true})
 

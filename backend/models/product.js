@@ -5,9 +5,22 @@ const productSchema = mongoose.Schema({
         type: String,
         require: true
     },
+    subTitle: {
+        type: String,
+        require: true
+    },
     price: {
         type: Number,
         require: true
+    },
+    originalPrice: {
+        type: Number,
+        require: true
+    },
+    slug: {
+        type: String,
+        require: true,
+        unique: true
     },
     brand: {
         type: String,
@@ -17,17 +30,22 @@ const productSchema = mongoose.Schema({
         require: true
     },
     category: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "category",
         require: true
     },
-    subCategory: {
+    thumbnail: {
         type: String,
+        require: true
     },
     photos:[
         {
             link: String
         }
-    ] 
+    ] ,
+    description: {
+        type: String
+    }
 }, {timestamps: true})
 
 const Product = mongoose.model('product', productSchema)

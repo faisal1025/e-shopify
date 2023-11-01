@@ -9,6 +9,7 @@ import NoPage from './pages/NoPage'
 import UserOptions from './pages/UserOptions'
 import Cart from './components/cart'
 import AddProduct from './components/AddProduct'
+import ShowProductDetails from './pages/ShowProductDetails'
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
                 <Route exact path='/' element={<Home />}/>
                 <Route path='login' element={<Login />} />
                 <Route path='register' element={<Register />} />
+                <Route path='/:slug/details' element={<ShowProductDetails />} />
                 <Route path='/user' element={<UserOptions />}> 
                   <Route path='cart' element={<Cart />} />
                   <Route path='add-products' element={<AddProduct />} />
