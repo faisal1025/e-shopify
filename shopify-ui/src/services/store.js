@@ -1,5 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import cartReducer from './product/cartSlice'
+import orderReducr from './product/orderSlice'
+import wishListReducer from './product/wishListSlice'
 import registerReducer from './user/registerSlice'
 import verifyEmailReducer from './user/verifyEmail'
 import verifyOtpReducer from './user/verifyOtp'
@@ -10,6 +12,8 @@ import {getHomeProductReducer, getProductByCategoryReducer, getProductByIdReduce
 export const store = configureStore({
   reducer: {
     cart: cartReducer,
+    order: orderReducr,
+    wishList: wishListReducer,
     register: registerReducer,
     verifyEmail: verifyEmailReducer,
     verifyOtp: verifyOtpReducer,

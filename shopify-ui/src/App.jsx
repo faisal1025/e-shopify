@@ -10,6 +10,9 @@ import UserOptions from './pages/UserOptions'
 import Cart from './components/cart'
 import AddProduct from './components/AddProduct'
 import ShowProductDetails from './pages/ShowProductDetails'
+import PaymentSuccessPage from './pages/PaymentSuccessPage'
+import Order from './components/order'
+import WishList from './components/WishList'
 
 export default function App() {
   return (
@@ -22,9 +25,12 @@ export default function App() {
                 <Route path='login' element={<Login />} />
                 <Route path='register' element={<Register />} />
                 <Route path='/:slug/details' element={<ShowProductDetails />} />
+                <Route path='/paymentsuccess' element={<PaymentSuccessPage/>} />
                 <Route path='/user' element={<UserOptions />}> 
                   <Route path='cart' element={<Cart />} />
                   <Route path='add-products' element={<AddProduct />} />
+                  <Route path='orders' element={<Order/>}/>
+                  <Route path='wishlists' element={<WishList/>}/>
                 </Route>
                 <Route path='*' element={<NoPage />} />
             </Routes>

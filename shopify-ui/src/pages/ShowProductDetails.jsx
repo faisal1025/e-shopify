@@ -8,6 +8,8 @@ import ProductDetailsCarousel from '../components/ProductDetailsCarousel';
 import ReactMarkdown from "react-markdown";
 import { getProductById } from '../services/product/productSlice';
 import { add, addCartItem } from '../services/product/cartSlice';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import { doLikeProduct, doLike } from '../services/product/wishListSlice';
 
 const ShowProductDetails = () => {
     const {state} = useLocation()
@@ -156,7 +158,7 @@ const ShowProductDetails = () => {
                                     onClick={()=>{
                                         isAuthenticated?
                                         dispatch(addCartItem({qty: 1, productId: p._id})):
-                                        dispatch(add({p}))
+                                        dispatch(add({item:{qty: 1, productId:p}}))
                                     }}
                                 >
                                     Add to Cart
@@ -164,9 +166,15 @@ const ShowProductDetails = () => {
                                 {/* ADD TO CART BUTTON END */}
 
                                 {/* WHISHLIST BUTTON START */}
-                                <button className="w-full py-4 rounded-full border border-black text-lg font-medium transition-transform active:scale-95 flex items-center justify-center gap-2 hover:opacity-75 mb-10">
+                                <button className="w-full py-4 rounded-full border border-black text-lg font-medium transition-transform active:scale-95 flex items-center justify-center gap-2 hover:opacity-75 mb-10" onClick={
+                                    ()=>{
+                                        isAuthenticated?
+                                        dispatch(doLikeProduct({productId: p._id})):
+                                        dispatch(doLike({productId: p}))
+                                    }
+                                }>
                                     Whishlist
-                                    {/* <IoMdHeartEmpty size={20} /> */}
+                                    <FavoriteBorderOutlinedIcon fontSize={'medium'}/>
                                 </button>
                                 {/* WHISHLIST BUTTON END */}
 

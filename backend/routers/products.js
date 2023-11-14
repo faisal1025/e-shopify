@@ -1,9 +1,18 @@
 const fs = require('fs')
 const express = require('express')
-const { handleCreateProducts, handleGetProductByCategory, handleGetProductById } = require('../controllers/products')
+const { handleCreateProducts,
+   handleGetProductByCategory,
+   handleGetProductById,
+   handleAddToCart, 
+   handleCheckout, 
+   handlePaymentVerification,
+   handleGetOrderedProduct, 
+   handleAddLikedProducts,
+   handleGetLikedProduct} = require('../controllers/products')
 const multer  = require('multer')
-const Cart = require('../models/cart')
 const { isAutheticated } = require('../middlewares/auth;js')
+const Order = require('../models/order')
+
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -33,70 +42,22 @@ router.route('/:slug/product')
     .get(handleGetProductById)
 
 router.route('/add-to-cart')
-    .post(isAutheticated, async (req, res)=>{
-      const { data } = req.body;
-      const userId = req.user.id
-      const products = [...data]
-      console.log("products", products);
-      const updated = await Cart.findOneAndUpdate({userId}, {
-        $push: {
-          products: {
-            $each: products
-          }
-        }
-      })
-      if(updated){
-        console.log("updated", updated);
-        Cart.find({userId}).populate({
-          path: 'products.productId'
-        }).then((result)=>{
-          console.log("update", result);
-          return res.json({
-            status: true,
-            content: {
-              meta: {
-                total: result[0].products.length,
-                totalAmount: 1200
-              },
-              data: result
-            }
-          })
-        }).catch((error)=>{
-          console.log("#error", error.message);
-        })
-      }else{
-        const create = await Cart.create({
-          userId: userId,
-          products: products
-        })
-  
-        if(create){
-          Cart.find({userId}).populate({
-            path: 'products.productId',
-          }).then((result)=>{
-            console.log("create", result);
-            return res.json({
-              status: true,
-              content: {
-                meta: {
-                  total: result.length,
-                  totalAmount: 1200
-                },
-                data: result.products
-              }
-            })
-          })
-        }else{
-          return res.json({
-            status: true,
-            msg: "Something went wrong"
-          })
-        }
-      }
+    .post(isAutheticated, handleAddToCart)
 
-    
-        
-    })
+router.route('/getOrders')
+    .get(isAutheticated, handleGetOrderedProduct)
+
+router.route('/add-liked-product')
+    .post(isAutheticated, handleAddLikedProducts)
+
+router.route('/get-liked-product')
+    .get(isAutheticated, handleGetLikedProduct)
+
+router.route('/checkout')
+    .post(isAutheticated, handleCheckout)
+
+router.route('/paymentVerification')
+    .post(handlePaymentVerification)
 
 
 module.exports = router

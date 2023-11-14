@@ -4,7 +4,7 @@ const connectToMongoDb = require('./connextion')
 const userRoute = require('./routers/users')
 const productRoute = require('./routers/products')
 const categoryRoute = require('./routers/categories')
-
+require('dotenv').config()
 
 const app = express()
 const PORT = 8001

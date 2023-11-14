@@ -5,12 +5,15 @@ import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SearchIcon from '@mui/icons-material/Search';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { addCartItem, getLocalCartItem } from '../services/product/cartSlice';
 
 const Header = () => {
   const dispatch = useDispatch()
   const {isAuthenticated, user} = useSelector(store => store.user)
   const cart = useSelector((store)=>store.cart)
+  const {likedItems} = useSelector(store => store.wishList)
 
   useEffect(()=>{
     if(isAuthenticated){
@@ -64,6 +67,14 @@ const Header = () => {
               </li>
               </>
             }
+            <li className='hover:bg-slate-400 rounded-full'>
+              <Link to={'/user/wishlists'}>
+                  <IconButton variant='outlined' color='black' className='flex flex-col justify-center relative'>
+                    <Typography variant='body2' component={'span'} className='rounded-full self-end absolute bg-orange-300 w-4 h-4 top-0 right-0 text-xs'>{likedItems.length}</Typography>
+                    <FavoriteIcon fontSize={'medium'}/>
+                  </IconButton> 
+              </Link>
+            </li>
             <li className='hover:bg-slate-400 rounded-full'>
               <Link to={'/user/cart'}>
                   <IconButton variant='outlined' color='black' className='flex flex-col justify-center relative'>

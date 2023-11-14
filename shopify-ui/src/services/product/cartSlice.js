@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, createReducer } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 const baseurl = "http://127.0.0.1:8001/api/product"
@@ -19,8 +19,8 @@ export const addCartItem= createAsyncThunk('addCartItem', async (product)=>{
     const items = JSON.parse(localCartItem);
     const locProduct = items.map((item, ind)=> {
       return {
-        qty: 1,
-        productId: item._id
+        qty: item.qty,
+        productId: item.productId._id
       }
     })
     products = [...products, ...locProduct]
@@ -45,21 +45,12 @@ export const removeCartItem= createAsyncThunk('removeCartItem', async (data)=>{
   return result.data;
 })
 
-
-const addCartItemReducer = createReducer(initialState, (builder) => {
-  builder.addCase(addCartItem.fulfilled, (state, action) => {})
-})
-const removeCartItemReducer = createReducer(initialState, (builder) => {
-  builder.addCase(removeCartItem.fulfilled, (state, action) => {})
-})
-
 export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
     getLocalCartItem: (state, action) => {
       const localCartItem = localStorage.getItem('anonymousCart');
-      console.log(localCartItem);
       if(localCartItem === null) {
         state.cartItems = []
         state.total = 0
@@ -68,15 +59,23 @@ export const cartSlice = createSlice({
         const items = JSON.parse(localCartItem);
         state.cartItems = items;
         state.total = items.length;
+        let sum = 0;
+        items.forEach((item, ind) => {
+          sum += (item.qty*item.productId?.price);
+        })
+        state.totalAmount = sum;
       }
     },
     add: (state, action) => {
+      console.log("add : ", action.payload.item.productId);
       state.cartItems = [...state.cartItems, action.payload.item]
-      state.totalAmount += action.payload.item.price
+      state.totalAmount += action.payload.item?.productId?.price
       state.total += 1
       localStorage.setItem("anonymousCart", JSON.stringify(state.cartItems))
     },
     remove: (state, action) => {
+        state.cartItems.splice(action.payload.ind, 1);
+        localStorage.setItem("anonymousCart", JSON.stringify(state.cartItems))
         state.total -= 1
     },
   },
