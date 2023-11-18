@@ -9,13 +9,18 @@ import ReactMarkdown from "react-markdown";
 import { getProductById } from '../services/product/productSlice';
 import { add, addCartItem } from '../services/product/cartSlice';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import { doLikeProduct, doLike } from '../services/product/wishListSlice';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { doLikeProduct, doLike, isLikedProduct, isLikedLocal, unLikedProducts, unLike } from '../services/product/wishListSlice';
+import {useSearchParams} from 'react-router-dom'
 
 const ShowProductDetails = () => {
+    const searchParams = useSearchParams()[0];
+    const ind = searchParams.get('ind');
     const {state} = useLocation()
     const dispatch = useDispatch()
     const {isAuthenticated, user} = useSelector(store => store.user)
     const { slug } = useParams();
+    const {isLiked, likedItems} = useSelector(store => store.wishList)
     const idProduct = useSelector(store => store.idProduct);
     const p = idProduct.data?.content?.data;
         
@@ -25,7 +30,11 @@ const ShowProductDetails = () => {
         }).catch((error) => {
             console.log(error);
         })  
-    }, [])
+
+        isAuthenticated
+            ?dispatch(isLikedProduct({slug}))
+            :dispatch(isLikedLocal({slug}))
+    }, [likedItems])
 
     const notify = () => {
         toast.success("Success. Check your cart!", {
@@ -168,13 +177,17 @@ const ShowProductDetails = () => {
                                 {/* WHISHLIST BUTTON START */}
                                 <button className="w-full py-4 rounded-full border border-black text-lg font-medium transition-transform active:scale-95 flex items-center justify-center gap-2 hover:opacity-75 mb-10" onClick={
                                     ()=>{
+                                        isLiked?
+                                        isAuthenticated?
+                                        dispatch(unLikedProducts(p._id)):
+                                        dispatch(unLike(ind)):
                                         isAuthenticated?
                                         dispatch(doLikeProduct({productId: p._id})):
                                         dispatch(doLike({productId: p}))
                                     }
                                 }>
                                     Whishlist
-                                    <FavoriteBorderOutlinedIcon fontSize={'medium'}/>
+                                    <FavoriteIcon fontSize={'medium'} sx={isLiked?{color: 'firebrick'}:{color: 'black'}}/>
                                 </button>
                                 {/* WHISHLIST BUTTON END */}
 

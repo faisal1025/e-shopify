@@ -1,5 +1,5 @@
 import React from 'react'
-import LoginForm from '../components/LoginForm'
+import LoginForm from '../components/auth/LoginForm'
 import LoginShopping from '../assets/home/Login-shopping.jpg'
 import { Typography } from '@mui/material'
 

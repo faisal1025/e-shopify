@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Button, Card, CardActions, CardContent, CardHeader, IconButton, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import RenderItem from './RenderItem'
-import emptyCart from '../assets/home/empty-cart.jpg'
-import { add, remove, addCartItem } from '../services/product/cartSlice'
-import { gettingOrders } from '../services/product/orderSlice'
-import DeleteIcon from '@mui/icons-material/Delete';
+import emptyCart from '../../assets/home/empty-cart.jpg'
+import { gettingOrders } from '../../services/product/orderSlice'
 import moment from 'moment'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Order = () => {
+  const navigate = useNavigate();
   const {isLoading, data} = useSelector(store => store.order)
-  const {user} = useSelector(store => store.user)
+  const {user, isAuthenticated} = useSelector(store => store.user)
   const dispatch = useDispatch()
   const [orderedProducts, setOrderedProducts] = useState(null);
 
@@ -30,6 +28,7 @@ const Order = () => {
             console.log(products);
             setOrderedProducts(products)
         })
+        .catch(err=>console.log(err))
   }, [])
 
   return (
@@ -37,8 +36,10 @@ const Order = () => {
         <Card className='w-full min-h-screen relative' variant="outlined">
             <CardHeader title={'My Orders'}/>
             <CardContent>
+                
                 <ul className='space-y-4'>
                 {
+                    isAuthenticated?
                     data?.result?.length === 0 ? 
                     <div className='flex h-96 justify-center items-center'>
                         <img src={emptyCart} width={300} alt='empty-cart'/>
@@ -51,8 +52,8 @@ const Order = () => {
                             orderedProducts?.map((product, ind) => {
                                 let item = product.productId
                                 return(
-                                    <Link to={`/order-details/${product.orderNo}`} >
-                                        <div className="flex py-5 gap-3 md:gap-5 border-b">
+                                    
+                                        <div className="flex py-5 gap-3 md:gap-5 border-b" onClick={()=>{navigate(`/order-details/${product.orderNo}`)}}>
                                             {/* IMAGE START */}
                                             <div className="shrink-0 aspect-square w-[50px] md:w-[120px]">
                                                 <img
@@ -120,12 +121,16 @@ const Order = () => {
                                                 </div>
                                             </div> 
                                         </div>
-                                    </Link>
+                                    
                                 )
                             })
                         }
                         </div>
-                    </div>)
+                    </div>):
+                    <div className='flex h-96 flex-col justify-center items-center'>
+                        <img src={emptyCart} width={300} alt='empty-cart'/>
+                        <div className='font-semibold'>Please login first to see your orders !</div>
+                    </div>
                 }
                 </ul>
                 </CardContent>

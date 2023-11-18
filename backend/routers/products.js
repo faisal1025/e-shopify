@@ -8,7 +8,9 @@ const { handleCreateProducts,
    handlePaymentVerification,
    handleGetOrderedProduct, 
    handleAddLikedProducts,
-   handleGetLikedProduct} = require('../controllers/products')
+   handleUnLikedProduct,
+   handleRemoveCartItem,
+   handleIsLikedProduct} = require('../controllers/products')
 const multer  = require('multer')
 const { isAutheticated } = require('../middlewares/auth;js')
 const Order = require('../models/order')
@@ -44,14 +46,20 @@ router.route('/:slug/product')
 router.route('/add-to-cart')
     .post(isAutheticated, handleAddToCart)
 
+router.route('/:id/remove-from-cart')
+    .delete(isAutheticated, handleRemoveCartItem)
+
 router.route('/getOrders')
     .get(isAutheticated, handleGetOrderedProduct)
 
 router.route('/add-liked-product')
     .post(isAutheticated, handleAddLikedProducts)
 
-router.route('/get-liked-product')
-    .get(isAutheticated, handleGetLikedProduct)
+router.route('/un-like-product')
+    .post(isAutheticated, handleUnLikedProduct)
+
+router.route('/is-liked-product')
+    .post(isAutheticated, handleIsLikedProduct)
 
 router.route('/checkout')
     .post(isAutheticated, handleCheckout)

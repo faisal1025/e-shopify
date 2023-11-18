@@ -1,24 +1,23 @@
 import React, { useEffect } from 'react'
 import { Box, Button, Card, CardActions, CardContent, CardHeader, IconButton, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import RenderItem from './RenderItem'
-import emptyCart from '../assets/home/empty-cart.jpg'
-import { checkout, gettingOrders } from '../services/product/orderSlice'
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import emptyCart from '../../assets/home/empty-cart.jpg'
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { doLikeProduct } from '../services/product/wishListSlice'
+import { doLikeProduct, getAnonymousLiked, unLike, unLikedProducts } from '../../services/product/wishListSlice'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const WishList = () => {
   const {isLoading, likedItems} = useSelector(store => store.wishList)
-  const {user} = useSelector(store => store.user)
+  const {user, isAuthenticated} = useSelector(store => store.user)
   const dispatch = useDispatch()
 
   useEffect(()=>{
+    isAuthenticated?
       dispatch(doLikeProduct(null))
         .then(result => console.log(result))
-        .catch(err => console.log(err))
+        .catch(err => console.log(err)):
+      dispatch(getAnonymousLiked());
   }, [])
 
   return (
@@ -29,7 +28,7 @@ const WishList = () => {
               <ul className='space-y-4'>
                 {
                   likedItems.length === 0 ? 
-                    <div className='flex h-96 justify-center items-center'>
+                    <div className='flex h-96 flex-col justify-center items-center'>
                       <img src={emptyCart} width={300} alt='empty-cart'/>
                       <div className='font-semibold'>Your WishList is Empty !</div>
 
@@ -77,7 +76,8 @@ const WishList = () => {
                                     </div>
                                     
                                     <div className="flex flex-row justify-end">
-                                          <IconButton fullWidth onClick={()=>{}}>
+                                          <IconButton fullWidth onClick={(e)=>{e.stopPropagation(); 
+                                          isAuthenticated?dispatch(unLikedProducts(item._id)):dispatch(unLike(ind))}}>
                                             <FavoriteIcon fontSize={'medium'} sx={{color: 'firebrick'}}/>
                                           </IconButton>
                                     </div>

@@ -4,10 +4,12 @@ import { Avatar, Button, IconButton, OutlinedInput, Typography } from '@mui/mate
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import SearchIcon from '@mui/icons-material/Search';
+
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { addCartItem, getLocalCartItem } from '../services/product/cartSlice';
+import { doLikeProduct, getAnonymousLiked } from '../services/product/wishListSlice';
+import Search from './Search';
 
 const Header = () => {
   const dispatch = useDispatch()
@@ -18,8 +20,10 @@ const Header = () => {
   useEffect(()=>{
     if(isAuthenticated){
       dispatch(addCartItem(null));
+      dispatch(doLikeProduct(null));
     }else{
       dispatch(getLocalCartItem());
+      dispatch(getAnonymousLiked());
     }
   }, [isAuthenticated])
 
@@ -32,17 +36,7 @@ const Header = () => {
           </div>
           <ul className="flex space-x-4 justify-center items-center">
             <li>
-                <OutlinedInput
-                    id="input-with-icon-adornment"
-                    endAdornment={
-                        <IconButton className='border-2 rounded-full hover:bg-slate-400'>
-                            <SearchIcon />
-                        </IconButton>
-                    }
-                    variant={'outlined'}
-                    placeholder='Search Product'
-                    size='small'
-                />
+               <Search />
             </li>
             {
               isAuthenticated ?

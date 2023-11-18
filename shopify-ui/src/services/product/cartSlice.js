@@ -31,17 +31,18 @@ export const addCartItem= createAsyncThunk('addCartItem', async (product)=>{
     }
   });
   localStorage.removeItem('anonymousCart');
-  console.log("result added cart ", result.data);
+  // console.log("result added cart ", result.data);
   return result.data;
 })
 
 
-export const removeCartItem= createAsyncThunk('removeCartItem', async (data)=>{
-  const result = await axios.delete(`${baseurl}/${data}/remove-to-cart`, {
+export const removeCartItem= createAsyncThunk('removeCartItem', async (productId)=>{
+  const result = await axios.delete(`${baseurl}/${productId}/remove-from-cart`, {
     headers: {
       Authorization: `bearer ${localStorage.getItem('token')}`
     }
   });
+  // console.log("removeCart", result.data);
   return result.data;
 })
 
@@ -74,12 +75,16 @@ export const cartSlice = createSlice({
       localStorage.setItem("anonymousCart", JSON.stringify(state.cartItems))
     },
     remove: (state, action) => {
-        state.cartItems.splice(action.payload.ind, 1);
+        const ind = action.payload.ind;
+        const product = action.payload.item;
+        state.totalAmount -= product.price;
+        state.cartItems.splice(ind, 1);
         localStorage.setItem("anonymousCart", JSON.stringify(state.cartItems))
         state.total -= 1
     },
   },
   extraReducers: (builder) => {
+    // for add cart items
     builder.addCase(addCartItem.pending, (state, action) => {
       console.log("pending");
       state.isLoading = true;
@@ -92,6 +97,27 @@ export const cartSlice = createSlice({
       state.totalAmount = action.payload?.content?.meta?.totalAmount || 0;
     })
     builder.addCase(addCartItem.rejected, (state, action) => {
+      console.log("failed");
+      state.cartItems = action.payload?.content?.data || [];
+      state.total = action.payload?.content?.meta?.total || 0;
+      state.totalAmount = action.payload?.content?.meta?.totalAmount || 0;
+      state.isLoading = false;
+      state.isError = true;
+    })
+
+    // for remove cart items
+    builder.addCase(removeCartItem.pending, (state, action)=>{
+      console.log('remove_pending');
+      state.isLoading = true;
+    })
+    builder.addCase(removeCartItem.fulfilled, (state, action) => {
+      console.log("fullfilled");
+      state.isLoading = false;
+      state.cartItems = action.payload?.content?.data[0]?.products || [];
+      state.total = action.payload?.content?.meta?.total || 0;
+      state.totalAmount = action.payload?.content?.meta?.totalAmount || 0;
+    })
+    builder.addCase(removeCartItem.rejected, (state, action) => {
       console.log("failed");
       state.cartItems = action.payload?.content?.data || [];
       state.total = action.payload?.content?.meta?.total || 0;

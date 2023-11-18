@@ -1,5 +1,5 @@
 import React from 'react'
-import RegisterForm from '../components/RegisterForm'
+import RegisterForm from '../components/auth/RegisterForm'
 import RegisterShopping from "../assets/home/register-shopping.jpg" 
 import { Typography } from '@mui/material'
 

@@ -7,16 +7,27 @@ const initialState = {
     isLoading: false,
     isError: false,
     likedItems: [],
+    isLiked: false
 }
 
-// export const getLikedProducts = createAsyncThunk('getLiked', async () => {
-//     const result = await axios.get(`${baseurl}/get-liked-product`, {
-//         headers: {
-//             'Authorization': `bearer ${localStorage.getItem('token')}`
-//         }
-//     });
-//     return result.data;
-// })
+export const unLikedProducts = createAsyncThunk('unLiked', async (id) => {
+    const result = await axios.post(`${baseurl}/un-like-product`, {productId: id}, {
+        headers: {
+            'Authorization': `bearer ${localStorage.getItem('token')}`
+        }
+    });
+    // console.log('unLiked shopify', result.data);
+    return result.data;
+})
+
+export const isLikedProduct = createAsyncThunk('likedProduct', async (slug) => {
+    const result = await axios.post(`${baseurl}/is-liked-product`, {slug: slug}, {
+        headers: {
+            'Authorization': `bearer ${localStorage.getItem('token')}`
+        }
+    });
+    return result.data;
+})
 
 export const doLikeProduct = createAsyncThunk('doLike', async (product) => {
     console.log("#doLikeProduct", product);
@@ -26,12 +37,12 @@ export const doLikeProduct = createAsyncThunk('doLike', async (product) => {
         const items = JSON.parse(anonymousLiked);
         const locProduct = items.map((item, ind)=> {
             return {
-                productId: item._id
+                productId: item.productId?._id
             }
         })
         products = [...products, ...locProduct]
     } 
-    console.log("#doLikeProduct", products);
+    // console.log("#doLikeProduct", products);
     const result = await axios.post(`${baseurl}/add-liked-product`, {data: products}, {
         headers: {
             'Authorization': `bearer ${localStorage.getItem('token')}`
@@ -54,15 +65,28 @@ const wishListSlice = createSlice({
             }
         },
         doLike: (state, action) => {
-            console.log(action.payload.productId);
-            const product = action.payload.productId
-            state.likedItems = [...state.likedItems, product]
+            console.log(action.payload);
+            // const product = action.payload.productId
+            state.likedItems = [...state.likedItems, action.payload]
             localStorage.setItem('doLike', JSON.stringify(state.likedItems))
         },
         unLike: (state, action) => {
             const ind = action.payload.ind;
             state.likedItems.splice(ind, 1);
             localStorage.setItem('doLike', JSON.stringify(state.likedItems));
+        },
+        isLikedLocal: (state, action) =>{
+            const slug = action.payload.slug;
+            const anonymousLiked = localStorage.getItem('doLike');
+            let flag = false;
+            if(anonymousLiked !== null){
+                const likedItems = JSON.parse(anonymousLiked);
+                likedItems.forEach(item=>{
+                    if(item.productId?.slug === slug) flag = true;
+                })
+            }
+            console.log("#isLikedLocal", flag);
+            state.isLiked = flag;
         }
     },
     extraReducers: (builder)=>{
@@ -80,21 +104,42 @@ const wishListSlice = createSlice({
             state.isError = true;
         })
 
-
-        // builder.addCase(getLikedProducts.pending, (state, action)=>{
-        //     state.isLoading = true;
-        // }),
-        // builder.addCase(getLikedProducts.fulfilled, (state, action)=>{
-        //     state.isError = false;
-        //     state.isLoading = false;
-        //     state.likedItems = action.payload.msg;
-        // }),
-        // builder.addCase(getLikedProducts.rejected, (state, action)=>{
-        //     state.isLoading = false;
-        //     state.isError = true;
-        // })
+        // unlike products
+        builder.addCase(unLikedProducts.pending, (state, action)=>{
+            console.log('pending unlike');
+            state.isLoading = true;
+        })
+        builder.addCase(unLikedProducts.fulfilled, (state, action)=>{
+            console.log('fullfilled unlike', action.payload.products);
+            state.isError = false;
+            state.isLoading = false;
+            state.likedItems = action.payload.products;
+        })
+        builder.addCase(unLikedProducts.rejected, (state, action)=>{
+            console.log('error unlike');
+            state.isLoading = false;
+            state.isError = true;
+        })
+        
+        // is liked product 
+        builder.addCase(isLikedProduct.pending, (state, action)=>{
+            console.log('pending isLiked');
+            state.isLoading = true;
+        })
+        builder.addCase(isLikedProduct.fulfilled, (state, action)=>{
+            console.log('fullfilled isLiked', action.payload.products);
+            state.isError = false;
+            state.isLoading = false;
+            state.isLiked = action.payload.isLiked;
+        })
+        builder.addCase(isLikedProduct.rejected, (state, action)=>{
+            console.log('error isLiked');
+            state.isLoading = false;
+            state.isError = true;
+        })
+        
     }
 })
 
-export const {doLike, unLike, anonymousLiked} = wishListSlice.actions;
+export const {doLike, unLike, getAnonymousLiked, isLikedLocal} = wishListSlice.actions;
 export default wishListSlice.reducer

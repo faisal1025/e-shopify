@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const slugify  = require('slugify');
 const Product = require('../models/product')
 const Category = require('../models/category')
@@ -79,7 +80,7 @@ async function handleAddToCart(req, res) {
     const { data } = req.body;
     const userId = req.user.id
     const products = [...data]
-    // console.log("products", products);
+    // console.log("products", products); 
     const updated = await Cart.findOneAndUpdate({userId}, {
         $push: {
             products: {
@@ -92,21 +93,21 @@ async function handleAddToCart(req, res) {
         Cart.find({userId}).populate({
         path: 'products.productId'
         }).then((result)=>{
-        // console.log("update", result);
-        let sum =  0;
-        result[0].products.forEach(product => {
-            sum += (product.qty*product.productId.price);
-        });
-        return res.json({
-            status: true,
-            content: {
-            meta: {
-                total: result[0].products.length,
-                totalAmount: sum
-            },
-            data: result
-            }
-        })
+            // console.log("update", result);
+            let sum =  0;
+            result[0].products.forEach(product => {
+                sum += (product.qty*product.productId.price);
+            });
+            return res.json({
+                status: true,
+                content: {
+                meta: {
+                    total: result[0].products.length,
+                    totalAmount: sum
+                },
+                data: result
+                }
+            })
         }).catch((error)=>{
             console.log("#error", error.message);
         })
@@ -117,29 +118,71 @@ async function handleAddToCart(req, res) {
         })
 
         if(create){
-        Cart.find({userId}).populate({
-            path: 'products.productId',
-        }).then((result)=>{
-            console.log("create", result);
-            return res.json({
-            status: true,
-            content: {
-                meta: {
-                total: result.length,
-                totalAmount: 1200
-                },
-                data: result.products
-            }
+            Cart.find({userId}).populate({
+                path: 'products.productId',
+            }).then((result)=>{
+                let sum =  0;
+                result[0].products.forEach(product => {
+                    sum += (product.qty*product.productId.price);
+                });
+                return res.json({
+                    status: true,
+                    content: {
+                    meta: {
+                        total: result[0].products.length,
+                        totalAmount: sum
+                    },
+                    data: result
+                    }
+                })
             })
-        })
         }else{
-        return res.json({
-            status: true,
+            return res.json({
+                status: true,
             msg: "Something went wrong"
         })
-        }
-    }    
+    }
+}    
 } 
+
+async function handleRemoveCartItem(req, res){
+    const productId = req.params.id;
+    console.log("unLike : ", productId);
+    const userId = req.user.id;
+    // console.log("userId : ", userId);
+    const updated = await Cart.findOneAndUpdate({userId}, {
+        $pull: {
+            products: {productId}
+        }
+    })
+    if(updated){
+        console.log("updated", updated);
+        const result = await Cart
+                .find({userId})
+                .populate({path: 'products.productId'});
+        
+        let sum =  0;
+        result[0].products.forEach(product => {
+            sum += (product.qty*product.productId.price);
+        });
+        return res.status(200).json({
+            status: true,
+            content: {
+            meta: {
+                total: result[0].products.length,
+                totalAmount: sum
+            },
+            data: result
+            }
+        })
+    }else{
+        console.log('not updated');
+        return res.status(500).json({
+            status: false,
+            msg: 'Something went wrong!'
+        })
+    }
+}
 
 const handlePaymentVerification = async (req, res) => {
     const {razorpay_payment_id, razorpay_order_id, razorpay_signature} = req.body;
@@ -161,11 +204,11 @@ const handlePaymentVerification = async (req, res) => {
       
       res.redirect(
         `${process.env.base_ui_url}/paymentsuccess?reference=${razorpay_payment_id}`
-      )
+        )
     }else{
-      return res.status(400).json({
-        status: false
-      })
+        return res.status(400).json({
+            status: false
+        })
     }
 }
 
@@ -227,11 +270,55 @@ async function handleAddLikedProducts(req, res){
     }
 }
 
-async function handleGetLikedProduct(req, res){
+
+async function handleUnLikedProduct(req, res){
+    const {productId} = req.body;
+    // console.log("unLike : ", productId);
     const userId = req.user.id;
-   
+    // console.log("userId : ", userId);
+    const updated = await LikedProduct.findOneAndUpdate({userId}, {
+        $pull: {
+            products: {productId}
+        }
+    })
+    if(updated){
+        console.log("updated", updated);
+        const result = await LikedProduct
+                .find({userId})
+                .populate({path: 'products.productId'});
+        return res.status(200).json({
+            status: true,
+            products: result[0].products
+        })
+    }else{
+        console.log('not updated');
+        return res.status(500).json({
+            status: false,
+            msg: 'Something went wrong!'
+        })
+    }
 }
 
+async function handleIsLikedProduct(req, res) {
+    const slug = req.body.slug;
+    const userId = req.user.id;
+    const result = await Product.findOne({slug: slug.slug});
+    console.log(userId);
+    const available = await LikedProduct.aggregate([ 
+        {$unwind: '$products'},
+        {$match: {userId: new mongoose.Types.ObjectId(userId), 'products.productId': new mongoose.Types.ObjectId(result._id)}}
+    ]);
+    console.log("liked", available);
+    if(available.length > 0){
+        return res.json({
+            isLiked: true
+        })
+    }else{
+        return res.json({
+            isLiked: false
+        })
+    }
+}
 async function handleGetOrderedProduct(req, res){
     const result  = await Order.find({
         userId : req.user.id
@@ -253,5 +340,7 @@ module.exports = {
     handleCheckout,
     handleGetOrderedProduct,
     handleAddLikedProducts,
-    handleGetLikedProduct
+    handleUnLikedProduct,
+    handleRemoveCartItem,
+    handleIsLikedProduct
 }
