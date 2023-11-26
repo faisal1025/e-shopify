@@ -11,11 +11,13 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a lo
 import { Carousel } from 'react-responsive-carousel';
 import TopProducts from '../components/TopProducts'
 import { Link } from 'react-router-dom'
+import { getCategories } from '../services/common/categorySlice'
 
 
 const Home = () => {
   const dispatch = useDispatch();
   const homeProducts = useSelector(store => store.home)
+  const {category} = useSelector(store => store.category)
 
   useEffect(() => {
     dispatch(getHomeProduct()).then((result) => {
@@ -23,6 +25,10 @@ const Home = () => {
     }).catch((error) => {
       console.log(error);
     })
+
+    dispatch(getCategories())
+      .then(result => console.log('#categoryResult', result))
+      .catch(err => console.log(err))
   }, [])
 
   return (
@@ -88,29 +94,39 @@ const Home = () => {
 
           </Carousel>
 
-          <section className="py-5 shadow">
-            <Typography variant='h4' gutterBottom className='drop-shadow-2xl text-center'>Our Categories</Typography>
-            <div className="flex flex-row justify-around items-center">
-              <Link to={`/sports-shoe/products`}>
-                <div className="flex flex-col justify-center items-center">
-                    <Avatar src={sportsShoe} variant='circular' sx={{ width: 100, height: 100, border: 1 }} />
-                    <div className='font-semibold'>Sports Shoes</div>
+          {
+            category&&(
+              <section className="py-5 shadow">
+                <Typography variant='h4' gutterBottom className='drop-shadow-2xl text-center'>Our Categories</Typography>
+                <div className="flex flex-row justify-around items-center">
+                  {
+                    category.map(category => {
+                      return(
+                        <Link to={`/${category.slug}/products`}>
+                          <div className="flex flex-col justify-center items-center">
+                              <Avatar src={sportsShoe} variant='circular' sx={{ width: 100, height: 100, border: 1 }} />
+                              <div className='font-semibold'>{category.name}</div>
+                          </div>
+                        </Link>
+                      )
+                    })
+                  }
+                  {/* <Link to={`/running-shoe/products`}>
+                    <div className="flex flex-col justify-center items-center">
+                        <Avatar src={runningShoe} variant='circular' sx={{ width: 100, height: 100, border: 1 }} />
+                        <div className='font-semibold'>Running Shoes</div>
+                    </div>
+                  </Link>
+                  <Link to={`/climbing-shoe/products`}>
+                    <div className="flex flex-col justify-center items-center">
+                        <Avatar src={climbingShoe} variant='circular' sx={{ width: 100, height: 100, border: 1 }}/>
+                        <div className='font-semibold'>Climbing Shoes</div>
+                    </div>
+                  </Link> */}
                 </div>
-              </Link>
-              <Link to={`/running-shoe/products`}>
-                <div className="flex flex-col justify-center items-center">
-                    <Avatar src={runningShoe} variant='circular' sx={{ width: 100, height: 100, border: 1 }} />
-                    <div className='font-semibold'>Running Shoes</div>
-                </div>
-              </Link>
-              <Link to={`/climbing-shoe/products`}>
-                <div className="flex flex-col justify-center items-center">
-                    <Avatar src={climbingShoe} variant='circular' sx={{ width: 100, height: 100, border: 1 }}/>
-                    <div className='font-semibold'>Climbing Shoes</div>
-                </div>
-              </Link>
-            </div>
-          </section>
+              </section>
+            )
+          }
 
           {homeProducts.data && (
             <section className='py-5 shadow-xl'>

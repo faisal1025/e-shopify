@@ -77,7 +77,7 @@ const WishList = () => {
                                     
                                     <div className="flex flex-row justify-end">
                                           <IconButton fullWidth onClick={(e)=>{e.stopPropagation(); 
-                                          isAuthenticated?dispatch(unLikedProducts(item._id)):dispatch(unLike(ind))}}>
+                                          isAuthenticated?dispatch(unLikedProducts(item._id)):dispatch(unLike(item._id))}}>
                                             <FavoriteIcon fontSize={'medium'} sx={{color: 'firebrick'}}/>
                                           </IconButton>
                                     </div>

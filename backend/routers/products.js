@@ -13,7 +13,8 @@ const { handleCreateProducts,
    handleIsLikedProduct} = require('../controllers/products')
 const multer  = require('multer')
 const { isAutheticated } = require('../middlewares/auth;js')
-const Order = require('../models/order')
+
+const Product = require('../models/product')
 
 
 const storage = multer.diskStorage({
@@ -66,6 +67,31 @@ router.route('/checkout')
 
 router.route('/paymentVerification')
     .post(handlePaymentVerification)
+
+router.route('/get-search-result')
+    .post(async (req, res) => {
+        const page = req.query.page || 0;
+        const productPerPage = 3;
+        const {searchVal} = req.body
+        console.log("page", page);
+
+        const totalProducts = await Product.aggregate([
+            {$match: {$text: { $search: searchVal }}},
+            {$group: {_id: null, count: {$sum: 1}}}
+        ])
+        // console.log(totalProducts);
+        const products = await Product.find({ $text: { $search: searchVal } }).skip(page*productPerPage).limit(productPerPage);
+
+        return res.status(200).json({
+            status: true,
+            meta:{
+                total: totalProducts[0].count,
+                totalPages: Math.ceil(totalProducts[0].count/productPerPage),
+                productPerPage
+            },
+            results: products
+        })
+    })
 
 
 module.exports = router

@@ -180,7 +180,7 @@ const ShowProductDetails = () => {
                                         isLiked?
                                         isAuthenticated?
                                         dispatch(unLikedProducts(p._id)):
-                                        dispatch(unLike(ind)):
+                                        dispatch(unLike(p._id)):
                                         isAuthenticated?
                                         dispatch(doLikeProduct({productId: p._id})):
                                         dispatch(doLike({productId: p}))

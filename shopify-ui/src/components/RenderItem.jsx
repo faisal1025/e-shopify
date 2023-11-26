@@ -49,6 +49,7 @@ const RenderItem = ({item, type, ind}) => {
                             </Typography>
                             <div className="flex items-center">
 
+                                
                             <p className='mr-2 text-lg font-semibold text-slate-500'>
                                 &#8377;{item.price}
                             </p>
@@ -67,7 +68,6 @@ const RenderItem = ({item, type, ind}) => {
                                         </p>
                                     </>
                                 )
-                                
                                 
                             }
                             </div>

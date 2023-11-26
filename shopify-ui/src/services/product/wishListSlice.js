@@ -71,7 +71,12 @@ const wishListSlice = createSlice({
             localStorage.setItem('doLike', JSON.stringify(state.likedItems))
         },
         unLike: (state, action) => {
-            const ind = action.payload.ind;
+            const id = action.payload;
+            const likedItems = JSON.parse(localStorage.getItem('doLike'));
+            let ind;
+            for(ind = 0; ind < likedItems.length; ind++){
+                if(likedItems[ind].productId._id === id) break;
+            }
             state.likedItems.splice(ind, 1);
             localStorage.setItem('doLike', JSON.stringify(state.likedItems));
         },

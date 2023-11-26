@@ -48,6 +48,10 @@ const productSchema = mongoose.Schema({
     }
 }, {timestamps: true})
 
+productSchema.index(
+    { "$**": "text" }
+)
+
 const Product = mongoose.model('product', productSchema)
 
 module.exports = Product

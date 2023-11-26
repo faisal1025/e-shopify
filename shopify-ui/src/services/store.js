@@ -8,10 +8,12 @@ import verifyEmailReducer from './user/verifyEmail'
 import verifyOtpReducer from './user/verifyOtp'
 import userReducer from './user/authSlice'
 import loginReducer from './user/loginSlice'
+import categoryReducer from './common/categorySlice'
 import {getHomeProductReducer, getProductByCategoryReducer, getProductByIdReducer} from './product/productSlice'
 
 export const store = configureStore({
   reducer: {
+    category: categoryReducer,
     search: searchReducer,
     cart: cartReducer,
     order: orderReducr,
