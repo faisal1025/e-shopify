@@ -9,8 +9,9 @@ export const getCategories = createAsyncThunk('getcategory', async () => {
     return result.data;
 })
 
-export const getCategoryProducts = createAsyncThunk('getCategoryProducts', async (slug) => {
-    const result = await axios.get(`${baseurl}/api/category/${slug}`);
+export const getCategoryProducts = createAsyncThunk('getCategoryProducts', async ({category, page}) => {
+    console.log('page', page);
+    const result = await axios.get(`${baseurl}/api/category/${category}?page=${page}`);
     console.log(result.data);
     return result.data;
 })

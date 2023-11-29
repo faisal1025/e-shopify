@@ -73,7 +73,6 @@ router.route('/get-search-result')
         const page = req.query.page || 0;
         const productPerPage = 3;
         const {searchVal} = req.body
-        console.log("page", page);
 
         const totalProducts = await Product.aggregate([
             {$match: {$text: { $search: searchVal }}},

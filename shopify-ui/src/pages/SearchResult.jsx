@@ -10,13 +10,14 @@ import { doLike, doLikeProduct, unLike, unLikedProducts } from '../services/prod
 import { add, addCartItem } from '../services/product/cartSlice';
 import { toast } from 'react-toastify';
 import Pagination from '../components/Pagination';
+import { changePage, getSearchResult } from '../services/common/searchSlice';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL 
 
 const SearchResult = () => {
-    const { data } = useSelector(store => store.search)
     const {isAuthenticated} = useSelector(store => store.user)
     const {likedItems} = useSelector(store => store.wishList)
+    const {data, page, searchVal} = useSelector(store => store.search);
     const dispatch = useDispatch()
 
     const isProductLiked = (likedItems, id) => {
@@ -31,6 +32,24 @@ const SearchResult = () => {
     const notifyAdded = () => {
         return toast.success("Item successfully added to cart")
     }
+
+    const handleSearchResult = () => {
+        dispatch(getSearchResult({searchVal, page})) 
+            .then(result => console.log('#result', result))
+            .catch(err => console.log(err))
+        
+    }
+
+    useEffect(()=>{
+        handleSearchResult();
+    }, [page])
+    
+    useEffect(() => {
+        return () => {
+            console.log("unmounted!!");
+            dispatch(changePage(0))
+        };
+    }, [])
     
     return (
         <>
@@ -47,7 +66,7 @@ const SearchResult = () => {
                                     :
                                     <Card className='w-full min-h-screen' variant="elevation">
                                         <CardHeader title={'Search Items'} />
-                                        <CardContent className='h-screen'>
+                                        <CardContent className='min-h-screen'>
                                             <div className='flex flex-row w-full'>
                                                 <div className="w-full">
                                                     {
@@ -165,28 +184,7 @@ const SearchResult = () => {
                                             </div>
                                         </CardContent>
                                         <CardActions className='justify-center items-center'>
-                                            {/* <div className='border-2 border-slate-900'>
-                                                <IconButton disabled={page === 0 ? true : false} onClick={()=>{dispatch(previousPage())}}>
-                                                    <ArrowBackIosNewIcon fontSize='small'/>
-                                                </IconButton>
-                                            </div>
-                                            {
-                                                [...Array().keys()].slice(1).map((p) => {
-                                                    return (
-                                                    <div className="border-2 border-slate-900">
-                                                        <IconButton color={page === p ? 'primary' : 'default'} onClick={()=>{dispatch(changePage(p))}}>
-                                                            <div className='font-semibold text-sm w-5'>{p}</div>
-                                                        </IconButton>
-                                                    </div>
-                                                    )
-                                                })
-                                            }
-                                            <div className="border-2 border-slate-900">
-                                                <IconButton disabled={page === data?.meta?.totalPages-1 ? true : false} onClick={()=>{dispatch(nextPage())}}>
-                                                    <ArrowForwardIosIcon fontSize='small'/>
-                                                </IconButton>
-                                            </div> */}
-                                            <Pagination pages={data?.meta?.totalPages}/>
+                                            { data?.meta?.totalPages > 1 && <Pagination pages={data?.meta?.totalPages} handler={handleSearchResult}/> }
                                         </CardActions>
                                     </Card>
                             }

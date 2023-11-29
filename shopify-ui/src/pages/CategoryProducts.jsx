@@ -1,17 +1,14 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import notResults from '../../src/assets/home/no-results.png'
 import { Card, CardActions, CardContent, CardHeader, IconButton, Typography } from '@mui/material'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { getDiscountedPricePercentage } from '../utils/helper'
 import { Link, useParams } from 'react-router-dom'
 import { doLike, doLikeProduct, unLike, unLikedProducts } from '../services/product/wishListSlice';
 import { add, addCartItem } from '../services/product/cartSlice';
 import { toast } from 'react-toastify';
-import { changePage, nextPage, previousPage } from '../services/common/searchSlice';
+import { changePage } from '../services/common/searchSlice';
 import { getCategoryProducts } from '../services/common/categorySlice';
 import Pagination from '../components/Pagination';
 
@@ -20,6 +17,7 @@ const BASE_URL = process.env.REACT_APP_BASE_URL
 const CategoryProducts = () => {
     const {category} = useParams();
     const dispatch = useDispatch();
+    const {page} = useSelector(store => store.search)
     const {categoryProducts} = useSelector(store => store.category)
     const {isAuthenticated} = useSelector(store => store.user)
     const {likedItems} = useSelector(store => store.wishList)
@@ -40,9 +38,16 @@ const CategoryProducts = () => {
     
 
     useEffect(() => {
-        dispatch(getCategoryProducts(category))
+        dispatch(getCategoryProducts({category, page}))
             .then(result => console.log('#categoryProduct', result))
             .catch(err => console.log(err))
+    }, [page])
+        
+    useEffect(() => {            
+        return () => {
+            console.log("unmounted!!");
+            dispatch(changePage(0))
+        };
     }, [])
 
     return (
@@ -52,7 +57,7 @@ const CategoryProducts = () => {
                     categoryProducts&&(
                         <Card>
                             <CardHeader title={categoryProducts.meta?.name}/>
-                            <CardContent className='h-screen'>
+                            <CardContent className='min-h-screen'>
                                 <div className='flex flex-row w-full'>
                                     <div className="w-full">
                                         {
@@ -169,8 +174,12 @@ const CategoryProducts = () => {
                                     </div>
                                 </div>
                             </CardContent>
-                            <CardActions>
-                                <Pagination pages={categoryProducts?.meta?.totalPages}/>
+
+                            <CardActions className='justify-center items-center'>
+                                {
+                                    categoryProducts?.meta?.totalPages > 1 && 
+                                    <Pagination pages={categoryProducts?.meta?.totalPages}/>
+                                }
                             </CardActions>
                         </Card>
                     )

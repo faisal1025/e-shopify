@@ -8,21 +8,9 @@ import { useNavigate } from 'react-router';
 
 
 const Search = () => {
-    // const [searchVal, setSearchVal] = useState(null);
     const dispatch = useDispatch();
-    const {page, searchVal} = useSelector(store => store.search);
+    const {searchVal} = useSelector(store => store.search);
     const navigate = useNavigate()
-
-    const handleSearchResult = () => {
-        dispatch(getSearchResult({searchVal, page})) 
-            .then(result => console.log('#result', result))
-            .catch(err => console.log(err))
-        
-    }
-
-    useEffect(()=>{
-        handleSearchResult();
-    }, [page])
 
 
     return (
@@ -31,7 +19,6 @@ const Search = () => {
                 id="input-with-icon-adornment"
                 endAdornment={
                     <IconButton  onClick={e=>{
-                        handleSearchResult(); 
                         navigate('/display-search-result');
                         }} className='border-2 rounded-full hover:bg-slate-400'>
 

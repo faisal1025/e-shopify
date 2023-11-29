@@ -34,9 +34,35 @@ async function handleGetCategories(req, res) {
 
 async function handleGetCategoryProducts(req, res){
     const slug = req.params.slug;
+    const page = req.query.page
     const productPerPage = 3
     const category = await Category.find({slug});
     const result = await Product.aggregate([
+        {$lookup: {
+            from: 'categories',
+            localField: 'category',
+            foreignField: '_id',
+            as: 'categories'
+        }},
+        {$project: {
+            category: {
+                $filter: {
+                    input: '$categories',
+                    as: 'category',
+                    cond: { $eq: ['$$category.slug', slug]  }
+                }
+            },
+        }},
+        {$match: {
+            category: {$ne: []}
+        }},
+        {$group: {
+            _id: null,
+            total: {$sum: 1}
+        }}
+    ])
+
+    const products = await Product.aggregate([
         {$lookup: {
             from: 'categories',
             localField: 'category',
@@ -56,15 +82,16 @@ async function handleGetCategoryProducts(req, res){
         {$match: {
             category: {$ne: []}
         }}
-    ])
-    console.log('category', result);
+    ]).skip(page*productPerPage).limit(productPerPage)
+
+    const totalProduct = result[0].total;
     res.status(200).json({
         status: true,
         meta: {
             name: category[0].name,
-            totalPages: Math.ceil(result.length/productPerPage)
+            totalPages: Math.ceil(totalProduct/productPerPage)
         },
-        data: result
+        data: products
     })
 }
 

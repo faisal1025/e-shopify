@@ -5,14 +5,14 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { changePage, nextPage, previousPage } from '../services/common/searchSlice';
 
-const Pagination = ({pages}) => {
+const Pagination = ({pages, handler}) => {
     const {page} = useSelector(store => store.search)
     const dispatch = useDispatch()
 
     return (
         <>
             <div className='border-2 border-slate-900'>
-                <IconButton disabled={page === 0 ? true : false} onClick={()=>{dispatch(previousPage())}}>
+                <IconButton disabled={page === 0 ? true : false} onClick={()=>{dispatch(previousPage());}}>
                     <ArrowBackIosNewIcon fontSize='small'/>
                 </IconButton>
             </div>
@@ -20,7 +20,7 @@ const Pagination = ({pages}) => {
                 [...Array(pages).keys()].slice(1).map((p) => {
                     return (
                     <div className="border-2 border-slate-900">
-                        <IconButton color={page === p ? 'primary' : 'default'} onClick={()=>{dispatch(changePage(p))}}>
+                        <IconButton color={page === p ? 'primary' : 'default'} onClick={()=>{dispatch(changePage(p));}}>
                             <div className='font-semibold text-sm w-5'>{p}</div>
                         </IconButton>
                     </div>
@@ -28,7 +28,7 @@ const Pagination = ({pages}) => {
                 })
             }
             <div className="border-2 border-slate-900">
-                <IconButton disabled={page === pages-1 ? true : false} onClick={()=>{dispatch(nextPage())}}>
+                <IconButton disabled={page === pages-1 ? true : false} onClick={()=>{dispatch(nextPage());}}>
                     <ArrowForwardIosIcon fontSize='small'/>
                 </IconButton>
             </div>
