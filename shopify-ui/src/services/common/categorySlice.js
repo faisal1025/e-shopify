@@ -27,7 +27,10 @@ const categorySlice = createSlice({
     name: 'category',
     initialState,
     reducers: {
-
+        setQty: (state, action) => {
+            const {ind, val} = action.payload;
+            state.categoryProducts.data[ind].curQty = val
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(getCategories.pending, (state, action) => {
@@ -51,6 +54,9 @@ const categorySlice = createSlice({
         builder.addCase(getCategoryProducts.fulfilled, (state, action) => {
             state.isLoading = false;
             state.isError = false;
+            action.payload.data = action.payload.data.map((product) => {
+                return {...product, curQty: 1}
+            })
             state.categoryProducts = action.payload;
         })
         builder.addCase(getCategoryProducts.rejected, (state, action) => {
@@ -60,4 +66,5 @@ const categorySlice = createSlice({
     }
 })
 
+export const {setQty} = categorySlice.actions
 export default categorySlice.reducer

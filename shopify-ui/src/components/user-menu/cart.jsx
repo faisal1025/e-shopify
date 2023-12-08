@@ -3,7 +3,7 @@ import { Box, Button, Card, CardActions, CardContent, CardHeader, IconButton, Ty
 import { useDispatch, useSelector } from 'react-redux'
 import RenderItem from '../RenderItem'
 import emptyCart from '../../assets/home/empty-cart.jpg'
-import { add, remove, addCartItem, removeCartItem } from '../../services/product/cartSlice'
+import { add, remove, addCartItem, removeCartItem, selectQty, selectQtyAuth } from '../../services/product/cartSlice'
 import { checkout } from '../../services/product/orderSlice'
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-toastify';
@@ -48,6 +48,7 @@ const Cart = () => {
     rzp1.open();
   }
 
+  
   return (
     <>
         <Card className='w-full min-h-screen relative' variant="outlined">
@@ -107,17 +108,23 @@ const Cart = () => {
                                               <div className="font-semibold">Quantity:</div>
                                               <select
                                                   className="hover:text-black"
-                                                  onChange={(e) => {}}
+                                                  onChange={(e) => {
+                                                    console.log("value: ", e.target.value, "cart value: ", product.qty);
+                                                    isAuthenticated?
+                                                    dispatch(selectQtyAuth({id: item._id, qty: e.target.value})):
+                                                    dispatch(selectQty({id: item._id, qty: e.target.value}))
+                                                  }}
+                                                  value={product.qty}
                                               >
                                                   {Array.from(
-                                                      { length: 50 },
+                                                      { length: Math.min(5, item.qty) },
                                                       (_, i) => i + 1
                                                   ).map((q, i) => {
                                                       return (
                                                           <option
                                                               key={i}
                                                               value={q}
-                                                              //  selected={data.quantity === q}
+                                                              selected={product.qty === q}
                                                           >
                                                               {q}
                                                           </option>

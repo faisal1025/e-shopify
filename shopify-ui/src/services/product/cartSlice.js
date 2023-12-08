@@ -12,6 +12,16 @@ const initialState = {
   totalAmount: 0,
 }
 
+export const selectQtyAuth = createAsyncThunk('selectQtyAuth', async(data) => {
+  console.log(data);
+  const result = await axios.post(`${baseurl}/change-qty`, data, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+  return result.data
+})
+
 export const addCartItem= createAsyncThunk('addCartItem', async (product)=>{
   let products = product ? [product] : [];
   const localCartItem = localStorage.getItem('anonymousCart');
@@ -82,6 +92,29 @@ export const cartSlice = createSlice({
         localStorage.setItem("anonymousCart", JSON.stringify(state.cartItems))
         state.total -= 1
     },
+    selectQty: (state, action) => {
+        const id = action.payload.id;
+        const qty = action.payload.qty;
+        const localCartItem = localStorage.getItem('anonymousCart');
+        if(localCartItem === null) {
+          state.cartItems = []
+          state.total = 0
+          state.totalAmount = 0
+        }else {
+          const items = JSON.parse(localCartItem);
+          let sum = 0;
+          items.forEach((item, ind) => {
+            if (item.productId?._id === id){
+              item.qty = qty;
+            } 
+            sum += (item.qty*item.productId?.price);
+          })
+          state.cartItems = items;
+          state.total = items.length;
+          state.totalAmount = sum;
+          localStorage.setItem("anonymousCart", JSON.stringify(state.cartItems))
+        }
+    }
   },
   extraReducers: (builder) => {
     // for add cart items
@@ -125,10 +158,26 @@ export const cartSlice = createSlice({
       state.isLoading = false;
       state.isError = true;
     })
+    
+    //setQty
+    builder.addCase(selectQtyAuth.pending, (state, action) => {
+      state.isLoading = true;
+    })
+    builder.addCase(selectQtyAuth.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isError = false;
+      state.cartItems = action.payload.content?.data;
+      state.total = action.payload.content?.meta?.total;
+      state.totalAmount = action.payload.content?.meta?.totalAmount;
+    })
+    builder.addCase(selectQtyAuth.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isError = true;
+    })
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { add, remove, getLocalCartItem } = cartSlice.actions
+export const { add, remove, getLocalCartItem, selectQty } = cartSlice.actions
 
 export default cartSlice.reducer

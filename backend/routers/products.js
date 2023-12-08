@@ -10,7 +10,8 @@ const { handleCreateProducts,
    handleAddLikedProducts,
    handleUnLikedProduct,
    handleRemoveCartItem,
-   handleIsLikedProduct} = require('../controllers/products')
+   handleIsLikedProduct,
+   handleChangeQty} = require('../controllers/products')
 const multer  = require('multer')
 const { isAutheticated } = require('../middlewares/auth;js')
 
@@ -79,8 +80,8 @@ router.route('/get-search-result')
             {$group: {_id: null, count: {$sum: 1}}}
         ])
         // console.log(totalProducts);
-        const products = await Product.find({ $text: { $search: searchVal } }).skip(page*productPerPage).limit(productPerPage);
-
+        const results = await Product.find({ $text: { $search: searchVal } }).skip(page*productPerPage).limit(productPerPage);
+        // console.log(results);
         return res.status(200).json({
             status: true,
             meta:{
@@ -88,9 +89,12 @@ router.route('/get-search-result')
                 totalPages: Math.ceil(totalProducts[0].count/productPerPage),
                 productPerPage
             },
-            results: products
+            results
         })
     })
+
+router.route('/change-qty')
+    .post(isAutheticated, handleChangeQty)
 
 
 module.exports = router

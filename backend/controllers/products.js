@@ -251,7 +251,7 @@ async function handleAddLikedProducts(req, res){
 
     const created = await LikedProduct.create({
         userId,
-        products
+        data
     })
 
     if(created !== null){
@@ -331,7 +331,37 @@ async function handleGetOrderedProduct(req, res){
     })
 }
 
+async function handleChangeQty(req, res){
+    const {totalqty, qty, id} = req.body;
+    const userId = req.user.id
+    await Cart.updateOne({userId, 'products.productId': new mongoose.Types.ObjectId(id)}, {
+        $set: {
+            'products.$.qty': qty
+        }
+    });
+   
+    const result = await Cart
+            .find({userId})
+            .populate({path: 'products.productId'});
+    
+    let sum =  0;
+    result[0].products.forEach(product => {
+        sum += (product.qty*product.productId.price);
+    });
+    return res.status(200).json({
+        status: true,
+        content: {
+            meta: {
+                total: result[0].products.length,
+                totalAmount: sum
+            },
+            data: result[0].products
+        }
+    })
+}
+
 module.exports = {
+    handleChangeQty,
     handleCreateProducts,
     handleGetProductByCategory,
     handleGetProductById,

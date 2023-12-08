@@ -33,6 +33,10 @@ const searchSlice = createSlice({
         },
         updateSearchText: (state, action) => {
             state.searchVal = action.payload
+        },
+        setQty: (state, action) => {
+            const {ind, val} = action.payload;
+            state.data.results[ind].curQty = val
         }
     },
     extraReducers: (builder) => {
@@ -42,6 +46,9 @@ const searchSlice = createSlice({
         builder.addCase(getSearchResult.fulfilled, (state, action) => {
             state.isLoading = false;
             state.isError = false;
+            action.payload.results = action.payload.results.map((product) => {
+                return {...product, curQty: 1}
+            })
             state.data = action.payload;
         })
         builder.addCase(getSearchResult.rejected, (state, action) => {
@@ -50,5 +57,5 @@ const searchSlice = createSlice({
         })
     }
 })
-export const {changePage, previousPage, nextPage, updateSearchText} = searchSlice.actions
+export const {changePage, previousPage, nextPage, updateSearchText, setQty} = searchSlice.actions
 export default searchSlice.reducer

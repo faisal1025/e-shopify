@@ -3,13 +3,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Card, CardActions, CardContent, CardHeader, IconButton, Typography } from '@mui/material'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { getDiscountedPricePercentage } from '../utils/helper'
+import { getDiscountedPricePercentage, notAdded, notifyAlreadyAdded, notifyAdded } from '../utils/helper'
 import { Link, useParams } from 'react-router-dom'
 import { doLike, doLikeProduct, unLike, unLikedProducts } from '../services/product/wishListSlice';
 import { add, addCartItem } from '../services/product/cartSlice';
 import { toast } from 'react-toastify';
 import { changePage } from '../services/common/searchSlice';
-import { getCategoryProducts } from '../services/common/categorySlice';
+import { getCategoryProducts, setQty } from '../services/common/categorySlice';
 import Pagination from '../components/Pagination';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL 
@@ -21,6 +21,7 @@ const CategoryProducts = () => {
     const {categoryProducts} = useSelector(store => store.category)
     const {isAuthenticated} = useSelector(store => store.user)
     const {likedItems} = useSelector(store => store.wishList)
+    const {cartItems} = useSelector(store => store.cart)
    
 
     const isProductLiked = (likedItems, id) => {
@@ -31,12 +32,7 @@ const CategoryProducts = () => {
         })
         return flag;
     }
-
-    const notifyAdded = () => {
-        return toast.success("Item successfully added to cart")
-    }
     
-
     useEffect(() => {
         dispatch(getCategoryProducts({category, page}))
             .then(result => console.log('#categoryProduct', result))
@@ -124,10 +120,10 @@ const CategoryProducts = () => {
                                                                     <div className="font-semibold">Quantity:</div>
                                                                     <select
                                                                         className="hover:text-black"
-                                                                        onChange={(e) => { e.stopPropagation() }}
+                                                                        onChange={(e) => { e.stopPropagation(); dispatch(setQty({val: e.target.value, ind})) }}
                                                                     >
                                                                         {Array.from(
-                                                                            { length: 50 },
+                                                                            { length: Math.min(5, item.qty) },
                                                                             (_, i) => i + 1
                                                                         ).map((q, i) => {
                                                                             return (
@@ -144,11 +140,16 @@ const CategoryProducts = () => {
                                                                 </div>
                                                                 <div className='flex flex-row justify-evenly items-center'>
                                                                     <IconButton onClick={() => {
-                                                                            isAuthenticated?
-                                                                            dispatch(addCartItem({qty: 1, productId: item._id})):
-                                                                            dispatch(add({item:{qty: 1, productId:item}}))
-
-                                                                            notifyAdded();
+                                                                            const val = notAdded(item._id, cartItems);
+                                                                            if(val === true){
+                                                                                isAuthenticated?
+                                                                                dispatch(addCartItem({qty: item.curQty, productId: item._id})):
+                                                                                dispatch(add({item:{qty: item.curQty, productId:item}}))
+    
+                                                                                notifyAdded();
+                                                                            }else{
+                                                                                notifyAlreadyAdded();
+                                                                            }
                                                                     }}>
                                                                         <AddShoppingCartIcon fontSize='small'/>
                                                                     </IconButton>

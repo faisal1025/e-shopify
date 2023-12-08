@@ -4,17 +4,18 @@ import notResults from '../../src/assets/home/no-results.png'
 import { Card, CardActions, CardContent, CardHeader, IconButton, Typography } from '@mui/material'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { getDiscountedPricePercentage } from '../utils/helper'
 import { Link } from 'react-router-dom'
 import { doLike, doLikeProduct, unLike, unLikedProducts } from '../services/product/wishListSlice';
 import { add, addCartItem } from '../services/product/cartSlice';
 import { toast } from 'react-toastify';
 import Pagination from '../components/Pagination';
-import { changePage, getSearchResult } from '../services/common/searchSlice';
+import { changePage, getSearchResult, setQty } from '../services/common/searchSlice';
+import { getDiscountedPricePercentage, notAdded, notifyAdded, notifyAlreadyAdded } from '../utils/helper'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL 
 
 const SearchResult = () => {
+    const { cartItems } = useSelector(store => store.cart) 
     const {isAuthenticated} = useSelector(store => store.user)
     const {likedItems} = useSelector(store => store.wishList)
     const {data, page, searchVal} = useSelector(store => store.search);
@@ -133,17 +134,17 @@ const SearchResult = () => {
                                                                                 <div className="font-semibold">Quantity:</div>
                                                                                 <select
                                                                                     className="hover:text-black"
-                                                                                    onChange={(e) => { e.stopPropagation() }}
+                                                                                    onChange={(e) => { e.stopPropagation(); dispatch(setQty({val: e.target.value, ind})); }}
                                                                                 >
                                                                                     {Array.from(
-                                                                                        { length: 50 },
+                                                                                        { length: Math.min(5, item.qty) },
                                                                                         (_, i) => i + 1
                                                                                     ).map((q, i) => {
                                                                                         return (
                                                                                             <option
                                                                                                 key={i}
                                                                                                 value={q}
-                                                                                            //  selected={data.quantity === q}
+                                                                                                selected={item.curQty === q}
                                                                                             >
                                                                                                 {q}
                                                                                             </option>
@@ -153,11 +154,16 @@ const SearchResult = () => {
                                                                             </div>
                                                                             <div className='flex flex-row justify-evenly items-center'>
                                                                                 <IconButton onClick={() => {
-                                                                                     isAuthenticated?
-                                                                                     dispatch(addCartItem({qty: 1, productId: item._id})):
-                                                                                     dispatch(add({item:{qty: 1, productId:item}}))
+                                                                                     const val = notAdded(item._id, cartItems);
+                                                                                     if(val == true){
+                                                                                        isAuthenticated?
+                                                                                        dispatch(addCartItem({qty: item.curQty, productId: item._id})):
+                                                                                        dispatch(add({item:{qty: item.curQty, productId:item}}))
 
-                                                                                     notifyAdded();
+                                                                                        notifyAdded();
+                                                                                     }else{
+                                                                                        notifyAlreadyAdded();
+                                                                                     }
                                                                                 }}>
                                                                                     <AddShoppingCartIcon fontSize='small'/>
                                                                                 </IconButton>
