@@ -1,12 +1,11 @@
-import { logoutUser } from '../services/user/authSlice'
+import { logoutUser, toggleMenu } from '../services/user/authSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import { Avatar, Button, IconButton, OutlinedInput, Typography } from '@mui/material'
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import MenuIcon from '@mui/icons-material/Menu';
 import { addCartItem, getLocalCartItem } from '../services/product/cartSlice';
 import { doLikeProduct, getAnonymousLiked } from '../services/product/wishListSlice';
 import Search from './Search';
@@ -31,9 +30,13 @@ const Header = () => {
     <>
       <header className='sticky top-0 z-10 bg-white'>
         <nav className='h-14 flex justify-between'> 
-          <div className="flex items-center">
-            <Link to={'/'} ><Typography variant='h5' color={"navy"}>E-SHOPIFY</Typography></Link>
-          </div>
+          <ul className="flex space-x-4 justify-center items-center">
+            <li>
+              <div className="flex items-center">
+                <Link to={'/'} ><Typography variant='h5' color={"navy"}>E-SHOPIFY</Typography></Link>
+              </div>
+            </li>
+          </ul>
           <ul className="flex space-x-4 justify-center items-center">
             <li>
                <Search />
@@ -41,7 +44,7 @@ const Header = () => {
             {
               isAuthenticated ?
               <>
-                <li>
+                <li onClick={()=>{dispatch(toggleMenu())}}>
                   <Avatar variant='circular'>{user.first_name[0]}</Avatar>
                 </li>
                 <li>

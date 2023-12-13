@@ -4,6 +4,7 @@ const connectToMongoDb = require('./connextion')
 const userRoute = require('./routers/users')
 const productRoute = require('./routers/products')
 const categoryRoute = require('./routers/categories')
+const inventoryRoute = require('./routers/inventory')
 require('dotenv').config()
 
 const app = express()
@@ -34,6 +35,7 @@ app.get('/', (req, res) => {
 app.use('/api/user', userRoute)
 app.use('/api/product', productRoute)
 app.use('/api/category', categoryRoute)
+app.use('/api/inventory', inventoryRoute)
 
 global.__basedir = __dirname;
 app.listen(PORT, ()=>{console.log(`Server is running on ${PORT} port`);})

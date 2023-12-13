@@ -6,7 +6,7 @@ import Header from './components/Header'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import NoPage from './pages/NoPage'
-import UserOptions from './pages/UserOptions'
+import MenuOptions from './pages/MenuOptions'
 import Cart from './components/user-menu/cart'
 import AddProduct from './components/user-menu/AddProduct'
 import ShowProductDetails from './pages/ShowProductDetails'
@@ -17,6 +17,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CategoryProducts from './pages/CategoryProducts'
 import SearchResult from './pages/SearchResult'
+import InventoryProducts from './components/user-menu/InventoryProducts'
+import InventoryCategory from './components/user-menu/InventoryCategory'
+import InventoryUser from './components/user-menu/InventoryUser'
 
 export default function App() {
   return (
@@ -33,11 +36,14 @@ export default function App() {
                 <Route path='/:slug/details' element={<ShowProductDetails />} />
                 <Route path='/paymentsuccess' element={<PaymentSuccessPage/>} />
                 <Route path='/display-search-result' element={<SearchResult/>} />
-                <Route path='/user' element={<UserOptions />}> 
+                <Route path='/user' element={<MenuOptions />}> 
                   <Route path='cart' element={<Cart />} />
                   <Route path='add-products' element={<AddProduct />} />
                   <Route path='orders' element={<Order/>}/>
                   <Route path='wishlists' element={<WishList/>}/>
+                  <Route path='inventory/products' element={<InventoryProducts/>}/>
+                  <Route path='inventory/categories' element={<InventoryCategory/>}/>
+                  <Route path='inventory/users' element={<InventoryUser/>}/>
                 </Route>
                 <Route path='*' element={<NoPage />} />
             </Routes>

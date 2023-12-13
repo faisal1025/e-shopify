@@ -8,9 +8,13 @@ const userSlice = createSlice({
     name: 'user',
     initialState: {
         isAuthenticated: token ? true : false,
-        user: token ? jwt_decode(token) : {}
+        user: token ? jwt_decode(token) : {},
+        showMenu: false
     },
     reducers: {
+        toggleMenu: (state, action) => {
+            state.showMenu = !state.showMenu;
+        },
         updateAuth: (state, action) => {
             const token = localStorage.getItem('token')
             state.isAuthenticated = token ? true : false
@@ -23,5 +27,5 @@ const userSlice = createSlice({
         }
     }
 })
-export const {updateAuth, logoutUser} = userSlice.actions
+export const {updateAuth, logoutUser, toggleMenu} = userSlice.actions
 export default userSlice.reducer

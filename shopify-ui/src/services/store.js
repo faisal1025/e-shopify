@@ -9,10 +9,16 @@ import verifyOtpReducer from './user/verifyOtp'
 import userReducer from './user/authSlice'
 import loginReducer from './user/loginSlice'
 import categoryReducer from './common/categorySlice'
+import inventoryProductsReducer from './Inventory/productsSlice'
+import inventoryCategoriesReducer from './Inventory/categoriesSlice'
+import inventoryUsersReducer from './Inventory/usersSlice'
 import {getHomeProductReducer, getProductByCategoryReducer, getProductByIdReducer} from './product/productSlice'
 
 export const store = configureStore({
   reducer: {
+    inventoryProducts: inventoryProductsReducer,
+    inventoryCategories: inventoryCategoriesReducer,
+    inventoryUsers: inventoryUsersReducer,
     category: categoryReducer,
     search: searchReducer,
     cart: cartReducer,
