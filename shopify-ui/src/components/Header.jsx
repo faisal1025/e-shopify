@@ -28,7 +28,7 @@ const Header = () => {
 
   return (
     <>
-      <header className='sticky top-0 z-10 bg-white'>
+      <header className='bg-white'>
         <nav className='h-14 flex justify-between'> 
           <ul className="flex space-x-4 justify-center items-center">
             <li>
