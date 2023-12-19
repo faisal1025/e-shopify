@@ -1,12 +1,10 @@
 const express = require('express')
-const { handleCreateCategory, 
-    handleGetCategories,
+const { handleGetCategories,
     handleGetCategoryProducts } = require('../controllers/categories')
-
+    
 const router = express.Router()
 
 router.route('/')
-    .post(handleCreateCategory)
     .get(handleGetCategories)
 
 router.route('/:slug')

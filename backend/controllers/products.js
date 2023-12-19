@@ -8,35 +8,6 @@ const crypto = require('crypto')
 const instance = require('../services/payment');
 const LikedProduct = require('../models/likedProduct');
 
-
-async function handleCreateProducts(req, res){
-    const { name, subTitle, price, originalPrice, brand, qty, category, description } = req.body;
-    const slug = slugify(name.toLowerCase())
-    const thumbnail = req.files['thumbnail'][0]?.path
-    const photos = req.files['photos'].map((file)=>{
-        return {
-            link: file?.path
-        }
-    })
-    try {
-        const result = await Product.create({
-            name, subTitle, price, originalPrice, slug, brand, qty, category, thumbnail, photos, description
-        })
-        res.status(201).json({
-            status: true,
-            content: {
-                data: result
-            }
-        })
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            status: false,
-            msg: error.message
-        })
-    }
-}
-
 async function handleGetProductByCategory(req, res){
     const slug = req.params.category
 
@@ -362,7 +333,6 @@ async function handleChangeQty(req, res){
 
 module.exports = {
     handleChangeQty,
-    handleCreateProducts,
     handleGetProductByCategory,
     handleGetProductById,
     handleAddToCart,

@@ -10,6 +10,10 @@ const categorySchema = mongoose.Schema({
         require: true,
         unique: true
     },
+    thumbnail: {
+        type: String,
+        require: true
+    },
 }, {timestamps: true})
 
 const Category = mongoose.model('category', categorySchema)

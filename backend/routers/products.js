@@ -12,32 +12,13 @@ const { handleCreateProducts,
    handleRemoveCartItem,
    handleIsLikedProduct,
    handleChangeQty} = require('../controllers/products')
-const multer  = require('multer')
+   
 const { isAutheticated } = require('../middlewares/auth;js')
 
 const Product = require('../models/product')
 
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      fs.mkdir(`./uploads/${req.body?.name}`, (err) => {
-        if(err){
-            console.log(err);
-        }
-        console.log("dir created successfully");
-      }) 
-      cb(null, `./uploads/${req.body?.name}`)
-    },
-    filename: function (req, file, cb) {
-      const uniquePrefix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null, uniquePrefix + '-' + file.originalname)
-    }
-})
-const upload = multer({ storage })
 const router = express.Router();
-
-router.route('/')
-    .post(upload.fields([{name: 'thumbnail', maxCount: 1}, {name: 'photos', maxCount: 5}]), handleCreateProducts)
 
 router.route('/:category/products')
     .get(handleGetProductByCategory)

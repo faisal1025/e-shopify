@@ -18,7 +18,9 @@ const Modal = ({closeModal, children}) => {
                     <div className='flex flex-row-reverse'>
                         <IconButton onClick={closeModal}><CloseIcon /></IconButton>
                     </div>
-                    {children}
+                    <div className='m-3'>
+                        {children}
+                    </div>
                 </div>
             </div>
         </>

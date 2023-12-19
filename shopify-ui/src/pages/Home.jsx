@@ -13,6 +13,7 @@ import TopProducts from '../components/TopProducts'
 import { Link } from 'react-router-dom'
 import { getCategories } from '../services/common/categorySlice'
 
+const baseurl = process.env.REACT_APP_BASE_URL
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -104,7 +105,7 @@ const Home = () => {
                       return(
                         <Link to={`/${category.slug}/products`}>
                           <div className="flex flex-col justify-center items-center">
-                              <Avatar src={sportsShoe} variant='circular' sx={{ width: 100, height: 100, border: 1 }} />
+                              <Avatar src={category.thumbnail ? baseurl+'/'+category.thumbnail : sportsShoe} variant='circular' sx={{ width: 100, height: 100, border: 1 }} />
                               <div className='font-semibold'>{category.name}</div>
                           </div>
                         </Link>

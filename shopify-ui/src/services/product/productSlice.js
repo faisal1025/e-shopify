@@ -34,7 +34,7 @@ export const getProductByCategoryReducer = createReducer(
 )
 
 export const getHomeProduct = createAsyncThunk("getHomeProduct", async () => {
-    const response = await axios.get(`${baseurl}/sports-shoe/products`)
+    const response = await axios.get(`${baseurl}/climbing-shoe/products`)
     return response.data;
 })
 
