@@ -1,15 +1,15 @@
-import { Button, Card, CardContent, CardHeader, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import { Button, Card, CardContent, CardHeader, Table, TableBody, TableCell, TableFooter, TableHead, TablePagination, TableRow } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { getInventoryProducts, removeProductAsync } from '../../services/Inventory/productsSlice';
+import { getInventoryProducts, removeProductAsync, changePage, setRowsPerPage } from '../../services/Inventory/productsSlice';
 import AddProduct from './AddProduct';
 import Modal from '../Modal';
 
 const InventoryProducts = () => {
     const [productData, setProductData] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const {isLoading, products, pageNo} = useSelector(store => store.inventoryProducts);
+    const {result, products, pageNo, itemPerPage, totalItems} = useSelector(store => store.inventoryProducts);
     const dispatch = useDispatch();
 
     const handleRemoveProduct = (slug) => {
@@ -19,10 +19,10 @@ const InventoryProducts = () => {
     }
 
     useEffect(() => {
-        dispatch(getInventoryProducts({page: pageNo}))
+        dispatch(getInventoryProducts({page: pageNo, itemPerPage}))
                 .then((result) => console.log(result))
                 .catch((err) => console.log('#err', err))
-     }, [isLoading])
+     }, [result, pageNo, itemPerPage])
             
     const openModal = (product) => {
         setProductData(product)
@@ -39,7 +39,6 @@ const InventoryProducts = () => {
                         <AddIcon />
                     }>Add Products</Button>
                 </div>
-                {showModal && <Modal closeModal={closeModal}><AddProduct productData={productData} closeModal={closeModal} /></Modal>}
                 <CardHeader title={'Products'}/>
                 <CardContent>    
                     <Table>
@@ -66,7 +65,23 @@ const InventoryProducts = () => {
                                 )
                             })}
                         </TableBody>
+                        <TableFooter>
+                            <TablePagination
+                             rowsPerPage={itemPerPage}
+                             page={pageNo}
+                             count={totalItems}
+                             onPageChange={(event, page) => {
+                                 dispatch(changePage({page}));
+                                }}
+                                onRowsPerPageChange={(event) => {
+                                    dispatch(setRowsPerPage(parseInt(event.target.value, 10)));
+                                    dispatch(changePage({page: 0}));
+                             }}
+                             rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                             />
+                        </TableFooter>
                     </Table>
+                    {showModal && <Modal closeModal={closeModal}><AddProduct productData={productData} closeModal={closeModal} /></Modal>}
                 </CardContent>
             </ Card>
         </>

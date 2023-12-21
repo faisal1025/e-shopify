@@ -18,7 +18,7 @@ const Search = () => {
              <OutlinedInput
                 id="input-with-icon-adornment"
                 endAdornment={
-                    <IconButton  onClick={e=>{
+                    <IconButton type='submit' onClick={e=>{
                         navigate('/display-search-result');
                         }} className='border-2 rounded-full hover:bg-slate-400'>
 

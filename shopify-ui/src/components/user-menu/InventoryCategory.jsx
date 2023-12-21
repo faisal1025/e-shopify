@@ -1,15 +1,15 @@
-import { Button, Card, CardContent, CardHeader, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import { Button, Card, CardContent, CardHeader, Table, TableBody, TableCell, TableFooter, TableHead, TablePagination, TableRow } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { getInventoryCategories, removeCategoryAsync } from '../../services/Inventory/categoriesSlice';
+import { getInventoryCategories, removeCategoryAsync, changePage, setRowsPerPage } from '../../services/Inventory/categoriesSlice';
 import Modal from '../Modal';
 import AddCategory from './AddCategory';
 
 const InventoryCategory = () => {
     const [categoryData, setCategoryData] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const {isLoading, categories, pageNo} = useSelector(store => store.inventoryCategories);
+    const {result, categories, pageNo, itemPerPage, totalItems} = useSelector(store => store.inventoryCategories);
     const dispatch = useDispatch();
 
     const handleRemoveCategory = (slug) => {
@@ -19,10 +19,10 @@ const InventoryCategory = () => {
     }
 
     useEffect(() => {
-        dispatch(getInventoryCategories({page: pageNo}))
+        dispatch(getInventoryCategories({page: pageNo, itemPerPage}))
                 .then((result) => console.log(result))
                 .catch((err) => console.log('#err', err))
-    }, [isLoading])
+    }, [result, pageNo, itemPerPage])
 
     const openModal = (category) => {
         setCategoryData(category)
@@ -38,7 +38,6 @@ const InventoryCategory = () => {
                         <AddIcon />
                     }>Add Category</Button>
                 </div>
-                {showModal && <Modal closeModal={closeModal}><AddCategory categoryData={categoryData} closeModal={closeModal}/></Modal>}
                 <CardHeader title={'Categories'}/>
                 <CardContent>
                     
@@ -66,7 +65,23 @@ const InventoryCategory = () => {
                                 )
                             })}
                         </TableBody>
+                        <TableFooter>
+                            <TablePagination
+                             rowsPerPage={itemPerPage}
+                             page={pageNo}
+                             count={totalItems}
+                             onPageChange={(event, page) => {
+                                 dispatch(changePage({page}));
+                                }}
+                                onRowsPerPageChange={(event) => {
+                                    dispatch(setRowsPerPage(parseInt(event.target.value, 10)));
+                                    dispatch(changePage({page: 0}));
+                                }}
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                />
+                        </TableFooter>
                     </Table>
+                    {showModal && <Modal closeModal={closeModal}><AddCategory categoryData={categoryData} closeModal={closeModal}/></Modal>}
                 </CardContent>
             </ Card>
         </>

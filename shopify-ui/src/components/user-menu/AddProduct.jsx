@@ -8,7 +8,7 @@ import React, { useRef } from 'react'
 import { useFormik } from 'formik'
 import { addProductSchema, updateProductSchema } from '../../schema';
 import { useDispatch, useSelector } from 'react-redux'
-import { addInventoryProducts } from '../../services/Inventory/productsSlice';
+import { addInventoryProducts, updateProductAsync } from '../../services/Inventory/productsSlice';
 
 const AddProduct = ({productData, closeModal}) => {
     const initialValues = {
@@ -32,9 +32,13 @@ const AddProduct = ({productData, closeModal}) => {
         validationSchema: productData ? updateProductSchema : addProductSchema,
         onSubmit: (values) => {
             console.log(values);
-            dispatch(addInventoryProducts(values))
-                .then(result=>console.log(result))
-                .catch(err=>console.log(err))
+            productData ?
+                dispatch(updateProductAsync({values, id: productData._id}))
+                    .then(result => console.log(result))
+                    .catch(err => console.log(err)) :
+                dispatch(addInventoryProducts(values))
+                    .then(result=>console.log(result))
+                    .catch(err=>console.log(err))
         }
     })
     return (

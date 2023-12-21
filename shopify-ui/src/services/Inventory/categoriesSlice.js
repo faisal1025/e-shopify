@@ -5,15 +5,17 @@ const initialState = {
     isLoading: false,
     isError: false,
     categories: [],
+    totalItems: 0,
     pageNo: 0,
-    itemPerPage: 5
+    itemPerPage: 5,
+    result: null
 }
 
 const baseurl = process.env.REACT_APP_BASE_URL
 
 export const getInventoryCategories = createAsyncThunk('inventoryCategories', async (data) => {
-    const {page} = data;
-    const products = await axios.get(`${baseurl}/api/inventory/categories?page=${page}`);
+    const {page, itemPerPage} = data;
+    const products = await axios.get(`${baseurl}/api/inventory/categories?page=${page}&row=${itemPerPage}`);
     console.warn('#products', products.data);
     return products.data;
 })
@@ -53,12 +55,19 @@ const inventoryCategoriesSlice = createSlice({
         decrementPage: (state, action) => {
             state.pageNo -= 1;
         },
+        changePage: (state, action) => {
+            state.pageNo = action.payload.page;
+        },
+        setRowsPerPage: (state, action) => {
+            state.itemPerPage = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(getInventoryCategories.fulfilled, (state, action) => {
             state.isLoading = false;
             state.isError = false;
-            state.categories = action.payload.data.categories;  
+            state.categories = action.payload.data.categories;
+            state.totalItems = action.payload.meta.totalItems;  
         })
         builder.addCase(getInventoryCategories.rejected, (state, action) => {
             state.isError = true;
@@ -70,6 +79,7 @@ const inventoryCategoriesSlice = createSlice({
         }) 
         builder.addCase(addInventoryCategories.fulfilled, (state, action) => {
             state.isLoading = false;
+            state.result = action.payload;
         })
         // remove
         builder.addCase(removeCategoryAsync.pending, (state, action) => {
@@ -77,6 +87,7 @@ const inventoryCategoriesSlice = createSlice({
         }) 
         builder.addCase(removeCategoryAsync.fulfilled, (state, action) => {
             state.isLoading = false;
+            state.result = action.payload;
         })
         // update
         builder.addCase(updateCategoryAsync.pending, (state, action) => {
@@ -84,9 +95,10 @@ const inventoryCategoriesSlice = createSlice({
         }) 
         builder.addCase(updateCategoryAsync.fulfilled, (state, action) => {
             state.isLoading = false;
+            state.result = action.payload;
         })
     }
 })
 
-export const {incrementPage, decrementPage} = inventoryCategoriesSlice.actions
+export const {incrementPage, decrementPage, changePage, setRowsPerPage} = inventoryCategoriesSlice.actions
 export default inventoryCategoriesSlice.reducer

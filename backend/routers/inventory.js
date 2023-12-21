@@ -14,17 +14,18 @@ const router = express.Router();
 
 const productStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-      fs.mkdir(`./uploads/${req.body?.name}`, (err) => {
-        if(err){
-            console.log(err);
-        }
-        console.log("dir created successfully");
-      }) 
-      cb(null, `./uploads/${req.body?.name}`)
+        const dir = `./uploads/${req.body?.name}`; 
+        fs.mkdir(dir, (err) => {
+            if(err){
+                console.log(err);
+            }
+            console.log("dir created successfully");
+        }) 
+        cb(null, dir)
     },
     filename: function (req, file, cb) {
-      const uniquePrefix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null, uniquePrefix + '-' + file.originalname)
+        const uniquePrefix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, uniquePrefix + '-' + file.originalname)
     }
 })
 
