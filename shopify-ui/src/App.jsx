@@ -20,6 +20,7 @@ import SearchResult from './pages/SearchResult'
 import InventoryProducts from './components/user-menu/InventoryProducts'
 import InventoryCategory from './components/user-menu/InventoryCategory'
 import InventoryUser from './components/user-menu/InventoryUser'
+import Profile from './components/user-menu/Profile'
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
                 <Route path='/display-search-result' element={<SearchResult/>} />
                 <Route path='/user' element={<MenuOptions />}> 
                   <Route path='cart' element={<Cart />} />
+                  <Route path='account' element={<Profile />} />
                   <Route path='add-products' element={<AddProduct />} />
                   <Route path='orders' element={<Order/>}/>
                   <Route path='wishlists' element={<WishList/>}/>

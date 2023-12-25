@@ -6,13 +6,13 @@ const Cart = require('../models/cart');
 const Order = require('../models/order');
 const crypto = require('crypto')
 const instance = require('../services/payment');
-const LikedProduct = require('../models/likedProduct');
+const LikedProduct = require('../models/likedProduct')
 
 async function handleGetProductByCategory(req, res){
     const slug = req.params.category
 
     try {
-        const category = await Category.findOne({slug});
+        const category = await Category.findOne({slug})
         const products = await Product.find({category: category._id});
         return res.status(200).json({
             status: true,
@@ -118,7 +118,7 @@ async function handleAddToCart(req, res) {
 
 async function handleRemoveCartItem(req, res){
     const productId = req.params.id;
-    console.log("unLike : ", productId);
+    // console.log("unLike : ", productId);
     const userId = req.user.id;
     // console.log("userId : ", userId);
     const updated = await Cart.findOneAndUpdate({userId}, {
@@ -127,7 +127,7 @@ async function handleRemoveCartItem(req, res){
         }
     })
     if(updated){
-        console.log("updated", updated);
+        // console.log("updated", updated);
         const result = await Cart
                 .find({userId})
                 .populate({path: 'products.productId'});
@@ -147,7 +147,7 @@ async function handleRemoveCartItem(req, res){
             }
         })
     }else{
-        console.log('not updated');
+        // console.log('not updated');
         return res.status(500).json({
             status: false,
             msg: 'Something went wrong!'
@@ -253,7 +253,7 @@ async function handleUnLikedProduct(req, res){
         }
     })
     if(updated){
-        console.log("updated", updated);
+        // console.log("updated", updated);
         const result = await LikedProduct
                 .find({userId})
                 .populate({path: 'products.productId'});
@@ -262,7 +262,7 @@ async function handleUnLikedProduct(req, res){
             products: result[0].products
         })
     }else{
-        console.log('not updated');
+        // console.log('not updated');
         return res.status(500).json({
             status: false,
             msg: 'Something went wrong!'
@@ -274,12 +274,12 @@ async function handleIsLikedProduct(req, res) {
     const slug = req.body.slug;
     const userId = req.user.id;
     const result = await Product.findOne({slug: slug.slug});
-    console.log(userId);
+    // console.log(userId);
     const available = await LikedProduct.aggregate([ 
         {$unwind: '$products'},
         {$match: {userId: new mongoose.Types.ObjectId(userId), 'products.productId': new mongoose.Types.ObjectId(result._id)}}
     ]);
-    console.log("liked", available);
+    // console.log("liked", available);
     if(available.length > 0){
         return res.json({
             isLiked: true

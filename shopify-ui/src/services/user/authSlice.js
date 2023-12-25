@@ -13,7 +13,7 @@ const userSlice = createSlice({
     },
     reducers: {
         toggleMenu: (state, action) => {
-            state.showMenu = !state.showMenu;
+            state.showMenu = action.payload.toggle;
         },
         updateAuth: (state, action) => {
             const token = localStorage.getItem('token')

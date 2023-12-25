@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Box, Button, FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material'
 import React from 'react'
 import { useNavigate } from  'react-router-dom'
+import { toast } from 'react-toastify'
 
 const PasswordComponent = ({login, errorObj}) => {
     const navigate = useNavigate()
@@ -113,10 +114,15 @@ const PasswordComponent = ({login, errorObj}) => {
         const hasError = validatePassword();
         
         if(!hasError){
-            console.log("Call for making Account", loginFrom.first_name, loginFrom.last_name, loginFrom.email, loginFrom.password, loginFrom.confirmPassword);
-            dispatch(registerUser(loginFrom)).then(()=>{
-                dispatch(updateAuth())
-                navigate("/");
+            // console.log("Call for making Account", loginFrom.first_name, loginFrom.last_name, loginFrom.email, loginFrom.password, loginFrom.confirmPassword);
+            dispatch(registerUser(loginFrom)).then((res)=>{
+                if(res.payload.status){
+                    dispatch(updateAuth())
+                    navigate("/");
+                    toast.success(res.payload.msg)
+                }else{
+                    toast.info(res.payload.msg)
+                }
             }).catch((error)=>{
                 console.log(error);
             })

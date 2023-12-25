@@ -4,6 +4,7 @@ import { updateAuth } from '../../services/user/authSlice'
 import { Box, Button, Card, CardContent, CardHeader, FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material'
 import React, { useState } from 'react'
 import {useNavigate} from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const LoginForm = () => {
     const dispatch = useDispatch()
@@ -75,9 +76,14 @@ const LoginForm = () => {
         const isValid = validateForm();
 
         if(!isValid){
-            dispatch(loginUser(loginFrom)).then(() => {
-                dispatch(updateAuth())
-                navigate('/');
+            dispatch(loginUser(loginFrom)).then((res) => {
+                if(res.payload.status){
+                    dispatch(updateAuth())
+                    navigate('/');
+                    toast.success(res.payload.msg)
+                }else{
+                    toast.info(res.payload.msg)
+                }
             }).catch((error) => {
                 console.log(error);
             })

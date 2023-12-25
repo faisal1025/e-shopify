@@ -10,13 +10,13 @@ require('dotenv').config()
 const app = express()
 const PORT = 8001
 
-connectToMongoDb("mongodb://127.0.0.1:27017/shopyfi-db").then(()=>{
+connectToMongoDb(process.env.connection_string).then(()=>{
     console.log("MongoDb Connected");
 })
 
 // middlewares
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: process.env.base_ui_url,
     optionsSuccessStatus: 200
 }))
 app.use(express.json())

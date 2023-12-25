@@ -11,12 +11,12 @@ const initialState = {
     totalItems: 0
 }
 
-const baseUrl = "http://127.0.0.1:8001/api/inventory";
+const baseUrl = process.env.REACT_APP_BASE_URL;
 
 export const getInventoryUsers = createAsyncThunk('inventoryUsers', async (data) => {
     const {page, itemPerPage} = data;
-    const products = await axios.get(`${baseUrl}/users?page=${page}&row=${itemPerPage}`);
-    console.warn('#products', products.data);
+    const products = await axios.get(`${baseUrl}/api/inventory/users?page=${page}&row=${itemPerPage}`);
+    // console.warn('#products', products.data);
     return products.data;
 })
 

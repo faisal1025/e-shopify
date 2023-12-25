@@ -13,30 +13,35 @@ import { Avatar } from '@mui/material';
 export const SlidebarData = [
     {
         title: 'My Account',
+        forAdmin: false,
         logo: <Avatar src={Profile} sx={{ width: 24, height: 24 }} />,
         dropDown: false,
         link: '/user/account'
     },
     {
         title: 'My Cart',
+        forAdmin: false,
         logo: <ShoppingCartIcon />,
         dropDown: false,
         link: '/user/cart'
     },
     {
         title: 'My Orders',
+        forAdmin: false,
         logo: <BusinessCenterIcon />,
         dropDown: false,
         link: '/user/orders'
     },
     {
         title: 'My Wishlist',
+        forAdmin: false,
         logo: <FavoriteBorderOutlinedIcon />,
         dropDown: false,
         link: '/user/wishlists'
     },
     {
         title: 'Manage Inventory',
+        forAdmin: true,
         logo: <InventoryIcon />,
         dropDown: true,
         elements: [

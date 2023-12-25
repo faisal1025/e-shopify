@@ -36,6 +36,7 @@ const Sidebar = () => {
                     {
                         SlidebarData.map((item, key) => {
                             return(
+                                (item.forAdmin === false || user.isAdmin === true) ?
                                 item.dropDown?
                                     <>
                                     <li key={key} className='flex justify-start items-center px-2 w-full hover:scale-105 cursor-pointer py-2'
@@ -51,8 +52,8 @@ const Sidebar = () => {
                                             {
                                             item.elements.map((ele, key) => {
                                                 return (
-                                                    <Link to={ele.link} className='w-full hover:scale-105'>
-                                                        <li key={key} className='flex justify-start items-center px-2 cursor-pointer py-2'>
+                                                    <Link key={key} to={ele.link} className='w-full hover:scale-105'>
+                                                        <li className='flex justify-start items-center px-2 cursor-pointer py-2'>
                                                             <Typography variant='body1' component={'div'} sx={{marginRight: 1}}>{ele.logo}</Typography>
                                                             <Typography variant='body2' component={'div'} >{ele.title}</Typography>
                                                         </li>
@@ -71,11 +72,12 @@ const Sidebar = () => {
                                         <Typography variant='body2' component={'div'} >{item.title}</Typography>
                                     </li>
                                 </Link> 
+                                : null
                             )
                         })
                     }
-                </ul>
-            </section>
+                    </ul>
+                    </section>
             </>
     )
 }

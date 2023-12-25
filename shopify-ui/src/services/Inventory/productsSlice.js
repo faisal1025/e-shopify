@@ -15,9 +15,9 @@ const baseurl = process.env.REACT_APP_BASE_URL
 
 export const getInventoryProducts = createAsyncThunk('inventoryProducts', async (data) => {
     const {page, itemPerPage} = data;
-    console.log('#page', page);
+    // console.log('#page', page);
     const products = await axios.get(`${baseurl}/api/inventory/products?page=${page}&row=${itemPerPage}`);
-    console.warn('#products', products.data);
+    // console.warn('#products', products.data);
     return products.data;
 })
 
@@ -37,7 +37,7 @@ export const addInventoryProducts = createAsyncThunk('addInventoryProducts', asy
     }
 
     const products = await axios.post(`${baseurl}/api/inventory/products`, fromData);
-    console.warn('#products', products.data);
+    // console.warn('#products', products.data);
     return products.data;
 })
 
@@ -89,7 +89,7 @@ const inventoryProductsSlice = createSlice({
             state.isLoading = true;
         })
         builder.addCase(getInventoryProducts.fulfilled, (state, action) => {
-            console.log("products", action.payload);
+            // console.log("products", action.payload);
             state.isLoading = false;
             state.isError = false;
             state.products = action.payload.data.products;

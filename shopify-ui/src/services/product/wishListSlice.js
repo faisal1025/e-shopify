@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios'
 
-const baseurl = "http://127.0.0.1:8001/api/product"
+const baseurl = process.env.REACT_APP_BASE_URL
 
 const initialState = {
     isLoading: false,
@@ -11,7 +11,7 @@ const initialState = {
 }
 
 export const unLikedProducts = createAsyncThunk('unLiked', async (id) => {
-    const result = await axios.post(`${baseurl}/un-like-product`, {productId: id}, {
+    const result = await axios.post(`${baseurl}/api/product/un-like-product`, {productId: id}, {
         headers: {
             'Authorization': `bearer ${localStorage.getItem('token')}`
         }
@@ -21,7 +21,7 @@ export const unLikedProducts = createAsyncThunk('unLiked', async (id) => {
 })
 
 export const isLikedProduct = createAsyncThunk('likedProduct', async (slug) => {
-    const result = await axios.post(`${baseurl}/is-liked-product`, {slug: slug}, {
+    const result = await axios.post(`${baseurl}/api/product/is-liked-product`, {slug: slug}, {
         headers: {
             'Authorization': `bearer ${localStorage.getItem('token')}`
         }
@@ -30,7 +30,7 @@ export const isLikedProduct = createAsyncThunk('likedProduct', async (slug) => {
 })
 
 export const doLikeProduct = createAsyncThunk('doLike', async (product) => {
-    console.log("#doLikeProduct", product);
+    // console.log("#doLikeProduct", product);
     let products = product ? [product] : [];
     const anonymousLiked = localStorage.getItem('doLike');
     if(anonymousLiked !== null) {
@@ -43,7 +43,7 @@ export const doLikeProduct = createAsyncThunk('doLike', async (product) => {
         products = [...products, ...locProduct]
     } 
     // console.log("#doLikeProduct", products);
-    const result = await axios.post(`${baseurl}/add-liked-product`, {data: products}, {
+    const result = await axios.post(`${baseurl}/api/product/add-liked-product`, {data: products}, {
         headers: {
             'Authorization': `bearer ${localStorage.getItem('token')}`
         }
@@ -90,7 +90,7 @@ const wishListSlice = createSlice({
                     if(item.productId?.slug === slug) flag = true;
                 })
             }
-            console.log("#isLikedLocal", flag);
+            // console.log("#isLikedLocal", flag);
             state.isLiked = flag;
         }
     },
@@ -111,34 +111,34 @@ const wishListSlice = createSlice({
 
         // unlike products
         builder.addCase(unLikedProducts.pending, (state, action)=>{
-            console.log('pending unlike');
+            // console.log('pending unlike');
             state.isLoading = true;
         })
         builder.addCase(unLikedProducts.fulfilled, (state, action)=>{
-            console.log('fullfilled unlike', action.payload.products);
+            // console.log('fullfilled unlike', action.payload.products);
             state.isError = false;
             state.isLoading = false;
             state.likedItems = action.payload.products;
         })
         builder.addCase(unLikedProducts.rejected, (state, action)=>{
-            console.log('error unlike');
+            // console.log('error unlike');
             state.isLoading = false;
             state.isError = true;
         })
         
         // is liked product 
         builder.addCase(isLikedProduct.pending, (state, action)=>{
-            console.log('pending isLiked');
+            // console.log('pending isLiked');
             state.isLoading = true;
         })
         builder.addCase(isLikedProduct.fulfilled, (state, action)=>{
-            console.log('fullfilled isLiked', action.payload.products);
+            // console.log('fullfilled isLiked', action.payload.products);
             state.isError = false;
             state.isLoading = false;
             state.isLiked = action.payload.isLiked;
         })
         builder.addCase(isLikedProduct.rejected, (state, action)=>{
-            console.log('error isLiked');
+            // console.log('error isLiked');
             state.isLoading = false;
             state.isError = true;
         })

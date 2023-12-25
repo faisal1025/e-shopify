@@ -1,21 +1,20 @@
-
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const baseurl = "http://127.0.0.1:8001/api/user"
+const baseurl = process.env.REACT_APP_BASE_URL
 
 export const loginUser = createAsyncThunk('loginUser', async (data) => {
-    console.log(data);
-    const response = await axios.post(`${baseurl}/login/`, data)
+    // console.log(data);
+    const response = await axios.post(`${baseurl}/api/user/login/`, data)
     localStorage.setItem('token', response.data.token)
-    console.log(response.data);
+    // console.log(response.data);
     return response.data
 }) 
 
 export const loginSlice = createSlice({
     name: 'login',
     initialState: {
+        status: false,
         msg: '',
         token: '',
         isLoading: false,
@@ -29,9 +28,10 @@ export const loginSlice = createSlice({
             state.isLoading = false
             state.msg = action.payload.msg
             state.token = action.payload.token
+            state.status = action.payload.status
         })
         builder.addCase(loginUser.rejected, (state, action) => {
-            console.log('Error', action.payload);
+            // console.log('Error', action.payload);
             state.isLoading = false
             state.isError = true
         })

@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {verifyEmail} from '../services/user/verifyEmail'
 import { Box, Button, FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material'
 import React, {useState} from 'react'
+import { toast } from 'react-toastify';
 import OtpComponent from './OtpComponent'
 
 const EmailVerificationComponent = ({login, errorObj, verified}) => {
@@ -55,11 +56,13 @@ const EmailVerificationComponent = ({login, errorObj, verified}) => {
         
         if(!hasError){
             console.log("Call for validating Email", loginFrom.email);
-            dispatch(verifyEmail(loginFrom)).then(()=>{
-                if(state.msg !== ''){
-                    alert(state.msg)
+            dispatch(verifyEmail(loginFrom)).then((res)=>{
+                if(res.payload.msg !== ''){
+                    toast.info(res.payload.msg)
                 }
-                setShowOtp(true)
+                
+                setShowOtp(res.payload.status)
+                
             }).catch((error)=>{
                 console.log(error);
             })

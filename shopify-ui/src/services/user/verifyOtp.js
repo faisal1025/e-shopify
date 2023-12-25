@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
 
-const baseurl = "http://127.0.0.1:8001/api/user"
+const baseurl = process.env.REACT_APP_BASE_URL
 
 export const verifyOtp = createAsyncThunk('verifyOtp', async (data) => {
-    console.log(data);
-    const response = await axios.post(`${baseurl}/verify-otp/`, data)
+    // console.log(data);
+    const response = await axios.post(`${baseurl}/api/user/verify-otp/`, data)
     return response.data
 }) 
 
@@ -13,6 +13,7 @@ const verifyOtpSlice = createSlice({
     name: "verifyOtpSlice",
     initialState: {
         msg: '',
+        status: false,
         token: '',
         isLoading: false,
         isError: false
@@ -27,9 +28,10 @@ const verifyOtpSlice = createSlice({
             console.log(action.payload);
             state.isLoading = false
             state.msg = action.payload.msg
+            state.status = action.payload.status
         })
         builder.addCase(verifyOtp.rejected, (state, action) => {
-            console.log('Error', action.payload);
+            // console.log('Error', action.payload);
             state.isLoading = false
             state.isError = true
         })

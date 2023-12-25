@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
 
-const baseurl = "http://127.0.0.1:8001/api/user"
+const baseurl = process.env.REACT_APP_BASE_URL
 
 export const verifyEmail = createAsyncThunk('verifyEmail', async (data) => {
-    console.log(data);
-    const response = await axios.post(`${baseurl}/verify-email/`, data)
-    console.log(response.data);
+    // console.log(data);
+    const response = await axios.post(`${baseurl}/api/user/verify-email/`, data)
+    // console.log(response.data);
     return response.data
 }) 
 
@@ -14,6 +14,7 @@ const verifyEmailSlice = createSlice({
     name: "verifyEmailSlice",
     initialState: {
         msg: '',
+        status: false,
         token: '',
         isLoading: false,
         isError: false
@@ -27,9 +28,10 @@ const verifyEmailSlice = createSlice({
         builder.addCase(verifyEmail.fulfilled, (state, action) => {
             state.isLoading = false
             state.msg = action.payload.msg
+            state.status = action.payload.status
         })
         builder.addCase(verifyEmail.rejected, (state, action) => {
-            console.log('Error', action.payload);
+            // console.log('Error', action.payload);
             state.msg = action.payload.msg
             state.isLoading = false
             state.isError = true

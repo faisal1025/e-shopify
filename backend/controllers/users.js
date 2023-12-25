@@ -13,8 +13,9 @@ async function handleVerifyEmail(req, res){
     
     const user = await User.findOne({email: email})
     if(user){
-        return res.status(400).json({
-            msg: "Email already registered."
+        return res.status(200).json({
+            msg: "Email already registered.",
+            status: false
         })
     }
     const hashOtp = await bcrypt.hash(otp, 10)
@@ -33,6 +34,7 @@ async function handleVerifyEmail(req, res){
             // send mail
             sendVerificationMail(email, otp)
             return res.status(200).json({
+                status: true,
                 data: updatedResult,
                 msg: 'Opt send successfully'
             })
@@ -46,14 +48,16 @@ async function handleVerifyEmail(req, res){
             sendVerificationMail(email, otp)
             if(result){
                 return res.status(201).json({
+                    status: true,
                     data: result,
                     msg: 'Opt send successfully'
                 })
             }
         }
     } catch (error) {
-        return res.status(400).json({
-            msg: error.message
+        return res.status(200).json({
+            status: false,
+            msg: error.message,
         })
     }
 }
@@ -66,19 +70,22 @@ async function handleVerifyOtp(req, res){
     })
     
     if(!result){
-        return res.status(400).json({
+        return res.status(200).json({
+            status: false,
             data: result,
             msg: "Account doesn't exist or account already verified"
         })
     }else if(result.expiresAt < Date.now()){
-        return res.status(400).json({
+        return res.status(200).json({
+            status: false,
             data: result,
             msg: "Otp is expired, please resend otp"
         })
     }else{
         bcrypt.compare(otp, result.hashOtp, (err, same) =>{
             if(err){
-                return res.status(500).json({
+                return res.status(200).json({
+                    status: false,
                     data: result,
                     msg: "Something went wrong please try again."
                 })
@@ -86,17 +93,20 @@ async function handleVerifyOtp(req, res){
             if(same === true){
                 emailVerification.deleteMany({email:email}).then(()=>{
                     return res.status(200).json({
+                        status: true,
                         data: result,
                         msg: "Your account has been verified"
                     })
                 }).catch((err) => {
-                    return res.status(500).json({
+                    return res.status(200).json({
+                        status: false,
                         data: result,
                         msg: err.message
                     })
                 })
             }else{
-                return res.status(400).json({
+                return res.status(200).json({
+                    status: false,
                     data: result,
                     msg: "Otp is not correct"
                 })
@@ -152,12 +162,14 @@ async function handleRegister(req, res){
         })
         const token = await setToken(result)
         res.status(201).json({
+            status: true,
             token: token,
             data: result,
             msg: "Account created Successfully"
         })
     } catch (error) {
-        res.status(400).json({
+        res.status(200).json({
+            status: false,
             msg: error.message
         })
     }
@@ -171,25 +183,29 @@ async function handleLogin(req, res){
     })
 
     if(!user){
-        return res.status(400).json({
+        return res.status(200).json({
+            status: false,
             msg: "User is not registered."
         })
     }
 
     bcrypt.compare(password, user.password, async (err, same) => {
         if(err){
-            return res.status(500).json({
+            return res.status(200).json({
+                status: false,
                 msg: err.message
             })
         }
         if(same){
             const token = await setToken(user)
             return res.status(200).json({
+                status: true,
                 token: token,
                 msg: "User is successfully logged in."
             })
         }else{
-            return res.status(400).json({
+            return res.status(200).json({
+                status: false,
                 msg: "Password is wrong"
             })
         }

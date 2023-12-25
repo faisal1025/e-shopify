@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { verifyOtp } from '../services/user/verifyOtp'
 import { Box, Button, FormControl, FormHelperText, InputLabel, OutlinedInput } from '@mui/material'
 import React from 'react'
+import { toast } from 'react-toastify'
 
 const OtpComponent = ({verified, otp, login}) => {
     const dispatch = useDispatch()
@@ -22,12 +23,12 @@ const OtpComponent = ({verified, otp, login}) => {
     const OnSubmit = (e) => {
         e.preventDefault()
         console.log("Call for validating Otp", loginFrom.otp);
-        dispatch(verifyOtp(loginFrom)).then(()=>{
-            console.log(state);
-            if(state.msg !== ''){
-                alert(state.msg)
+        dispatch(verifyOtp(loginFrom)).then((res)=>{
+            console.log(res);
+            if(res.payload.msg !== ''){
+                toast.info(res.payload.msg)
             }
-            setIsVerified(true)
+            setIsVerified(res.payload.status)
         }).catch((error)=>{
             console.log(error);
         })

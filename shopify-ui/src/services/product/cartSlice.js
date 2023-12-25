@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const baseurl = "http://127.0.0.1:8001/api/product"
+const baseurl = process.env.REACT_APP_BASE_URL
 
 
 const initialState = {
@@ -14,7 +14,7 @@ const initialState = {
 
 export const selectQtyAuth = createAsyncThunk('selectQtyAuth', async(data) => {
   console.log(data);
-  const result = await axios.post(`${baseurl}/change-qty`, data, {
+  const result = await axios.post(`${baseurl}/api/product/change-qty`, data, {
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     }
@@ -35,7 +35,7 @@ export const addCartItem= createAsyncThunk('addCartItem', async (product)=>{
     })
     products = [...products, ...locProduct]
   } 
-  const result = await axios.post(`${baseurl}/add-to-cart`, { data: products }, {
+  const result = await axios.post(`${baseurl}/api/product/add-to-cart`, { data: products }, {
     headers: {
       "Authorization": `Bearer ${localStorage.getItem('token')}`
     }

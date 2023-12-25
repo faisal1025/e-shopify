@@ -2,10 +2,10 @@
 import { createAsyncThunk, createReducer } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const baseurl = "http://127.0.0.1:8001/api/product"
+const baseurl = process.env.REACT_APP_BASE_URL
 
 export const getProductByCategory = createAsyncThunk('getProductByCategory', async (data) => {
-    const response = await axios.get(`${baseurl}/${data}/products`)
+    const response = await axios.get(`${baseurl}/api/product/${data}/products`)
     return response.data;
 })
 
@@ -34,7 +34,7 @@ export const getProductByCategoryReducer = createReducer(
 )
 
 export const getHomeProduct = createAsyncThunk("getHomeProduct", async () => {
-    const response = await axios.get(`${baseurl}/climbing-shoe/products`)
+    const response = await axios.get(`${baseurl}/api/product/climbing-shoe/products`)
     return response.data;
 })
 
@@ -62,7 +62,7 @@ export const getHomeProductReducer = createReducer(
 )
 
 export const getProductById = createAsyncThunk("getProductById", async (slug) => {
-    const response = await axios.get(`${baseurl}/${slug}/product`)
+    const response = await axios.get(`${baseurl}/api/product/${slug}/product`)
     return response.data;
 })
 

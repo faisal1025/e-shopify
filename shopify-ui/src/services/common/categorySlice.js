@@ -10,9 +10,9 @@ export const getCategories = createAsyncThunk('getcategory', async () => {
 })
 
 export const getCategoryProducts = createAsyncThunk('getCategoryProducts', async ({category, page}) => {
-    console.log('page', page);
+    // console.log('page', page);
     const result = await axios.get(`${baseurl}/api/category/${category}?page=${page}`);
-    console.log(result.data);
+    // console.log(result.data);
     return result.data;
 })
 
@@ -40,7 +40,7 @@ const categorySlice = createSlice({
             state.isLoading = false;
             state.isError = false;
             state.category = action.payload?.data;
-            console.log('reducer category', action.payload?.data);
+            // console.log('reducer category', action.payload?.data);
         })
         builder.addCase(getCategories.rejected, (state, action) => {
             state.isLoading = false;
