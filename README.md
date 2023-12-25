@@ -4,8 +4,9 @@ This is an e-commerce shoe store from where you can find lot's of product.
 ## Features
 - Authentication and Authorization
 - Razorpay payment integration
-- Add to Wishlist
-- Add to Cart
+- Search Anonymously Possible
+- Add to Wishlist Anonymously Possible
+- Add to Cart Anonymously Possible
 - Place Order for Authenticated User
 - Manage Inventory need Admin Access
 
@@ -32,6 +33,22 @@ This is an e-commerce shoe store from where you can find lot's of product.
 
 <img
   src="./Preview/Home-2.png"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 100%">
+
+- Search Page
+
+<img
+  src="./Preview/Search.png"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 100%">
+
+- Product Detail Page
+
+<img
+  src="./Preview/ProductDetailPage.png"
   alt="Alt text"
   title="Optional title"
   style="display: inline-block; margin: 0 auto; max-width: 100%">
