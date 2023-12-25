@@ -17,7 +17,9 @@ connectToMongoDb(process.env.connection_string).then(()=>{
 // middlewares
 app.use(cors({
     origin: process.env.base_ui_url,
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200,
+    methods: ['POST', 'GET', 'DELETE', 'PUT'],
+    credentials: true
 }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
