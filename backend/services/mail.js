@@ -26,7 +26,8 @@ const sendVerificationMail = async (to, otp) => {
     // console.log("hey there, from email send func", to, otp);
     transporter.sendMail({
         from: '"shopify_info" <shopify@gmail.com>', // sender address
-        to: "faisalprofessional1@gmail.com", // list of receivers
+        to: to, 
+        // || "faisalprofessional1@gmail.com", // list of receivers
         subject: "Verify your email", // Subject line
         // text: `This is the otp please verify ${otp}`, // plain text body
         html: body, // html body
