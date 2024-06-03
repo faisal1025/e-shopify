@@ -27,10 +27,10 @@ const WishList = () => {
             <CardContent>
               <ul className='space-y-4'>
                 {
-                  likedItems?.length || 0 === 0 ? 
+                  likedItems?.length === 0 ? 
                     <div className='flex h-96 flex-col justify-center items-center'>
                       <img src={emptyCart} width={300} alt='empty-cart'/>
-                      <div className='font-semibold'>Your WishList is Empty !</div>
+                      <div className='font-semibold'>Your WishList is Empty ! </div>
                     </div>
                   :
                     (<div className='flex flex-row justify-between'>

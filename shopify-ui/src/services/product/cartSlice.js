@@ -47,7 +47,7 @@ export const addCartItem= createAsyncThunk('addCartItem', async (product)=>{
 
 
 export const removeCartItem= createAsyncThunk('removeCartItem', async (productId)=>{
-  const result = await axios.delete(`${baseurl}/${productId}/remove-from-cart`, {
+  const result = await axios.delete(`${baseurl}/api/product/${productId}/remove-from-cart`, {
     headers: {
       Authorization: `bearer ${localStorage.getItem('token')}`
     }

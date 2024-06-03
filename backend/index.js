@@ -10,7 +10,7 @@ require('dotenv').config()
 const app = express()
 const PORT = 8001
 const base_ui_url = process.env.NODE_ENV === 'production' ? process.env.base_ui_url_prod : process.env.base_ui_url_local
-const connection_string = process.env.NODE_ENV === 'production' ? process.env.connection_string_prod : process.env.connection_string_local
+const connection_string =  process.env.NODE_ENV === 'production' ? process.env.connection_string_prod : process.env.connection_string_local
 
 connectToMongoDb(connection_string).then(()=>{
     console.log("MongoDb Connected");
@@ -44,3 +44,5 @@ app.use('/api/inventory', inventoryRoute)
 
 global.__basedir = __dirname;
 app.listen(PORT, ()=>{console.log(`Server is running on ${PORT} port`);})
+
+module.exports = {base_ui_url}

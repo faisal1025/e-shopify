@@ -30,7 +30,7 @@ export const isLikedProduct = createAsyncThunk('likedProduct', async (slug) => {
 })
 
 export const doLikeProduct = createAsyncThunk('doLike', async (product) => {
-    // console.log("#doLikeProduct", product);
+    console.log("#doLikeProduct", product);
     let products = product ? [product] : [];
     const anonymousLiked = localStorage.getItem('doLike');
     if(anonymousLiked !== null) {
@@ -42,7 +42,7 @@ export const doLikeProduct = createAsyncThunk('doLike', async (product) => {
         })
         products = [...products, ...locProduct]
     } 
-    // console.log("#doLikeProduct", products);
+    console.log("#doLikeProduct", products);
     const result = await axios.post(`${baseurl}/api/product/add-liked-product`, {data: products}, {
         headers: {
             'Authorization': `bearer ${localStorage.getItem('token')}`

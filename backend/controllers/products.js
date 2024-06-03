@@ -6,7 +6,9 @@ const Cart = require('../models/cart');
 const Order = require('../models/order');
 const crypto = require('crypto')
 const instance = require('../services/payment');
-const LikedProduct = require('../models/likedProduct')
+const LikedProduct = require('../models/likedProduct');
+
+const base_ui_url = process.env.NODE_ENV === 'production' ? process.env.base_ui_url_prod : process.env.base_ui_url_local
 
 async function handleGetProductByCategory(req, res){
     const slug = req.params.category
@@ -174,7 +176,7 @@ const handlePaymentVerification = async (req, res) => {
       })
       
       res.redirect(
-        `${process.env.base_ui_url}/paymentsuccess?reference=${razorpay_payment_id}`
+        `${base_ui_url}/paymentsuccess?reference=${razorpay_payment_id}`
         )
     }else{
         return res.status(400).json({
