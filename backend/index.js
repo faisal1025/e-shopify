@@ -44,5 +44,3 @@ app.use('/api/inventory', inventoryRoute)
 
 global.__basedir = __dirname;
 app.listen(PORT, ()=>{console.log(`Server is running on ${PORT} port`);})
-
-module.exports = {base_ui_url}
